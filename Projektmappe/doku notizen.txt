@@ -1,0 +1,13 @@
+doku geräteliste
+
+Technologien ermittelt
+
+Wie kam Künstliche Intelligenz zum Einsatz?
+- Projektauftrag in einzelne Häppchen einteilen lassen, zur besseren Nachkontrolle.
+- Projektauftrag umformulieren lassen um mir die Erstellung von Unterlagen zu erleichtern.
+- Recherche für benötigte Technologien
+- Qualitätssicherung
+Was hat Künstliche Intelligenz generiert?
+- Projektauftrag - nicht den Antrag, nur den Auftrag
+- keine einzige zeile Code
+
