@@ -6,7 +6,7 @@ namespace Digitale_Geraeteliste.Core.Model
 {
     internal class Category
     {
-        internal int Id { get; set; }
-        internal string Name { get; set; } = string.Empty;
+        internal int CategoryId { get; set; }
+        internal string CategoryName { get; set; } = string.Empty;
     }
 }
