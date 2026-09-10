@@ -11,7 +11,7 @@ namespace Digitale_Geraeteliste.Core.Model
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
-        public int standardLendDuration { get; set; }
+        public int StandardLendDuration { get; set; }
         public bool IsActive { get; set; }
         public bool IsRetired { get; set; }
         public bool NeedsMaintenance { get; set; }
