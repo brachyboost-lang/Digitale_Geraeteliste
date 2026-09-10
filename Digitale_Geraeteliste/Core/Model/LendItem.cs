@@ -31,7 +31,7 @@ namespace Digitale_Geraeteliste.Core.Model
         {
             BorrowedBy = employee;
             LendDate = dateTime;
-            ExpectedReturnDate = LendDate.AddDays(LendItem.Item.StandardLendDuration);
+            ExpectedReturnDate = LendDate.AddDays(Item.StandardLendDuration);
         }
 
         public void LendItemToEmployee(Employee employee, DateTime dateTime, int duration)
