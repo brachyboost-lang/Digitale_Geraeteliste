@@ -1,0 +1,16 @@
+Id;Name;Beschreibung;Typ;StandardLeihdauerTage;IsActive;IsRetired
+1;Isolationsmessgerät Fluke 1507;Isolationswiderstandsmessung bis 1000 V, Koffer mit Prüfspitzen;Messtechnik;3;true;false
+2;Installationstester Profitest MTECH;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;Messtechnik;5;true;false
+3;Zangenamperemeter Fluke 376 FC;Echteffektivwert bis 1000 A, mit flexibler Stromzange;Messtechnik;7;true;false
+4;Wärmebildkamera Testo 872;320 x 240 Pixel, für Thermografie an Schaltanlagen;Messtechnik;2;true;false
+5;Netzanalysator Fluke 1748;Dreiphasen-Netzqualitätsanalyse für Langzeitmessungen;Messtechnik;14;true;false
+6;Digitalmultimeter Fluke 87V;Handmultimeter, Standardausrüstung für Störungssuche;Messtechnik;7;true;false
+7;Leitungssucher Amprobe AT-6030;Ortung stromführender und spannungsloser Leitungen;Ortung;3;true;false
+8;Laserentfernungsmesser Leica Disto D2;Messbereich bis 100 m, für Aufmaß beim Kunden;Vermessung;5;true;false
+9;Kernbohrgerät Hilti DD 150-U;Diamantkernbohren bis 162 mm, inklusive Wasserfangring;Bohren;2;true;false
+10;Bohrhammer Hilti TE 60-ATC;SDS-Max Kombihammer für Durchbrüche;Bohren;5;true;false
+11;Akku-Bohrschrauber Makita DDF484;18 V, zwei Akkus und Ladegerät im Koffer;Bohren;10;true;false
+12;Winkelschleifer Bosch GWS 18V-10;125 mm Akku-Winkelschleifer mit Absaughaube;Trennen;5;true;false
+13;Kabelzugset Katimex Kabelmax;Einziehband 60 m mit Zubehörsatz;Kabelverlegung;3;true;false
+14;Rotationslaser Bosch GRL 300 HV;Horizontal und vertikal, mit Stativ und Messlatte;Vermessung;3;true;false
+15;Stemmhammer Bosch GSH 5 CE;Abbruchhammer 5 kg, Motorschaden, nicht mehr im Einsatz;Bohren;2;false;true

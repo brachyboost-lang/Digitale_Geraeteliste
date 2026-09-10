@@ -11,6 +11,5 @@ namespace Digitale_Geraeteliste.Core.Model
         public string FirstName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
-
     }
 }
