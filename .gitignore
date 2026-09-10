@@ -1,0 +1,48 @@
+## Visual Studio / .NET
+
+# Build-Ergebnisse
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+
+# Visual Studio Arbeitsverzeichnis und Benutzereinstellungen
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+
+# Test- und Analyseergebnisse
+[Tt]est[Rr]esult*/
+*.coverage
+*.coveragexml
+BenchmarkDotNet.Artifacts/
+
+# SQLite-Datenbank der Anwendung (wird beim Start neu erzeugt)
+*.db
+*.db-shm
+*.db-wal
+
+# Sonstiges
+*.log
+*.tmp
+Thumbs.db
