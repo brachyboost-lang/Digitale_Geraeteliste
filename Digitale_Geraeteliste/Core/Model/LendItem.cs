@@ -9,12 +9,12 @@ namespace Digitale_Geraeteliste.Core.Model
         internal int Id { get; set; }
         internal DateTime LendDate { get; set; }
         internal DateTime ExpectedReturnDate { get; set; }
-        internal DateTime? ActualReturnDate { get; set; } ;
+        internal DateTime? ActualReturnDate { get; set; }
         internal Employee BorrowedBy { get; set; }
         internal Item Item { get; set; }
         internal Employee LendBy { get; set; }
         internal bool IsActive { get; set; } = true;
-        internal bool IsOverdue => !IsReturned && DateTime.Now > ExpectedReturnDate;
+        internal bool IsOverdue => IsActive && DateTime.Now > ExpectedReturnDate;
         internal string AffiliatedContractNumber { get; set; } = string.Empty;
         
         internal LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy)
