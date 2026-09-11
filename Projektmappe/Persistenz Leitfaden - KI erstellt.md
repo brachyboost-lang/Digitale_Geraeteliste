@@ -8,14 +8,8 @@ selbst geschrieben, hier stehen nur Strukturen und Signaturen.
 Bezug: [Projektauftrag - KI erstellt.md](Projektauftrag%20-%20KI%20erstellt.md),
 Testdaten unter `Testdaten/`, Modellklassen unter `Digitale_Geraeteliste/Core/Model/`.
 
-## 0. Zwei Blocker vorab
+## 0. Ein Blocker vorab
 
-Beide kosten je zwei Minuten und verhindern sonst stundenlange Fehlersuche.
-
-**Zugriffsmodifikatoren.** Entity Framework bildet per Konvention ausschließlich öffentliche
-Properties ab. Aktuell sind die Klassen `public`, die Properties aber `internal`. EF würde die
-Tabellen also mit einer einzigen Spalte anlegen oder gar nicht erst starten. Alle Entitäten und
-ihre Properties gehören auf `public`, `Category` eingeschlossen.
 
 **Parameterlose Konstruktoren.** `Employee` und `LendItem` haben nur Konstruktoren mit
 Pflichtparametern. EF Core erzeugt Objekte beim Laden aus der Datenbank über Reflection und
