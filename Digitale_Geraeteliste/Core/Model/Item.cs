@@ -5,11 +5,12 @@ using System.Text;
 
 namespace Digitale_Geraeteliste.Core.Model
 {
-    internal class Item : Category
+    internal class Item 
     {
-        internal int ItemId { get; set; }
+        internal int Id { get; set; }
         internal int InventoryNumber { get; set; }
-        internal string ItemName { get; set; } = string.Empty;
+        internal string Name { get; set; } = string.Empty;
+        internal Category Category { get; set; } 
         internal string Description { get; set; } = string.Empty;
         internal int StandardLendDuration { get; set; }
         internal bool IsActive { get; set; }
