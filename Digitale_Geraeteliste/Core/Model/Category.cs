@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Digitale_Geraeteliste.Core.Model
 {
-    internal class Category
+    public class Category
     {
-        internal int Id { get; set; }
-        internal string Name { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

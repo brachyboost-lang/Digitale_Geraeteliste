@@ -4,20 +4,20 @@ using System.Text;
 
 namespace Digitale_Geraeteliste.Core.Model
 {
-    internal class LendItem
+    public class LendItem
     {
-        internal int Id { get; set; }
-        internal DateTime LendDate { get; set; }
-        internal DateTime ExpectedReturnDate { get; set; }
-        internal DateTime? ActualReturnDate { get; set; }
-        internal Employee BorrowedBy { get; set; }
-        internal Item Item { get; set; }
-        internal Employee LendBy { get; set; }
-        internal bool IsActive { get; set; } = true;
-        internal bool IsOverdue => IsOverdueAt(DateTime.Now);
-        internal string AffiliatedContractNumber { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public DateTime LendDate { get; set; }
+        public DateTime ExpectedReturnDate { get; set; }
+        public DateTime? ActualReturnDate { get; set; }
+        public Employee BorrowedBy { get; set; }
+        public Item Item { get; set; }
+        public Employee LendBy { get; set; }
+        public bool IsActive { get; set; } = true;
+        public bool IsOverdue => IsOverdueAt(DateTime.Now.Date);
+        public string AffiliatedContractNumber { get; set; } = string.Empty;
         
-        internal LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy)
+        public LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy)
         {
             Id = id;
             LendDate = lendDate;
@@ -31,14 +31,14 @@ namespace Digitale_Geraeteliste.Core.Model
         {
             BorrowedBy = employee;
             LendDate = dateTime;
-            ExpectedReturnDate = DateTime.Now.AddDays(Item.StandardLendDuration);
+            ExpectedReturnDate = LendDate.AddDays(Item.StandardLendDuration);
         }
 
         public void LendItemToEmployee(Employee employee, DateTime dateTime, int duration)
         {
             BorrowedBy = employee;
             LendDate = dateTime;
-            ExpectedReturnDate = (DateTime.Now.AddDays(duration));
+            ExpectedReturnDate = LendDate.AddDays(duration);
         }
         internal bool IsOverdueAt(DateTime dayToCheck) => ActualReturnDate == null && dayToCheck > ExpectedReturnDate;
     }
