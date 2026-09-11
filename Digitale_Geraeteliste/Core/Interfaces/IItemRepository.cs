@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Digitale_Geraeteliste.Core.Interfaces
 {
-    internal interface IItemRepository
+    public interface IItemRepository
     {
     }
 }

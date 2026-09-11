@@ -13,6 +13,7 @@ namespace Digitale_Geraeteliste.Core.Model
         public Employee BorrowedBy { get; set; }
         public int BorrowedById { get; set; } // FK
         public Item Item { get; set; }
+        public int ItemId { get; set; } // FK
         public Employee LendBy { get; set; }
         public int LendById { get; set; } // FK
         public bool IsActive { get; set; } = true;
@@ -43,6 +44,6 @@ namespace Digitale_Geraeteliste.Core.Model
             LendDate = dateTime;
             ExpectedReturnDate = LendDate.AddDays(duration);
         }
-        internal bool IsOverdueAt(DateTime dayToCheck) => ActualReturnDate == null && dayToCheck > ExpectedReturnDate;
+        public bool IsOverdueAt(DateTime dayToCheck) => ActualReturnDate == null && dayToCheck > ExpectedReturnDate;
     }
 }

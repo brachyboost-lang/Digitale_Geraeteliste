@@ -8,6 +8,7 @@ namespace Digitale_Geraeteliste.Core.Model
     public class Item 
     {
         public int Id { get; set; } // PK
+
         public int InventoryNumber { get; set; }
         public string Name { get; set; } = string.Empty;
         public Category? Category { get; set; } 
