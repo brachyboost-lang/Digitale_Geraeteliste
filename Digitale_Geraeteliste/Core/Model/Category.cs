@@ -6,7 +6,7 @@ namespace Digitale_Geraeteliste.Core.Model
 {
     public class Category
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // PK
         public string Name { get; set; } = string.Empty;
 
         private Category() { }
