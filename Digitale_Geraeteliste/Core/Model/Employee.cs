@@ -21,6 +21,7 @@ namespace Digitale_Geraeteliste.Core.Model
             FullName = CreateFullName(firstName, lastName);
         }
 
+        private Employee() { }
         public string CreateFullName(string firstName, string lastName)
         {
             string fullName = firstName + " " + lastName;

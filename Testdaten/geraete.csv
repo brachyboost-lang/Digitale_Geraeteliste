@@ -1,16 +1,121 @@
-Id;Name;Beschreibung;Typ;StandardLeihdauerTage;IsActive;IsRetired
-1;Isolationsmessgerät Fluke 1507;Isolationswiderstandsmessung bis 1000 V, Koffer mit Prüfspitzen;Messtechnik;3;true;false
-2;Installationstester Profitest MTECH;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;Messtechnik;5;true;false
-3;Zangenamperemeter Fluke 376 FC;Echteffektivwert bis 1000 A, mit flexibler Stromzange;Messtechnik;7;true;false
-4;Wärmebildkamera Testo 872;320 x 240 Pixel, für Thermografie an Schaltanlagen;Messtechnik;2;true;false
-5;Netzanalysator Fluke 1748;Dreiphasen-Netzqualitätsanalyse für Langzeitmessungen;Messtechnik;14;true;false
-6;Digitalmultimeter Fluke 87V;Handmultimeter, Standardausrüstung für Störungssuche;Messtechnik;7;true;false
-7;Leitungssucher Amprobe AT-6030;Ortung stromführender und spannungsloser Leitungen;Ortung;3;true;false
-8;Laserentfernungsmesser Leica Disto D2;Messbereich bis 100 m, für Aufmaß beim Kunden;Vermessung;5;true;false
-9;Kernbohrgerät Hilti DD 150-U;Diamantkernbohren bis 162 mm, inklusive Wasserfangring;Bohren;2;true;false
-10;Bohrhammer Hilti TE 60-ATC;SDS-Max Kombihammer für Durchbrüche;Bohren;5;true;false
-11;Akku-Bohrschrauber Makita DDF484;18 V, zwei Akkus und Ladegerät im Koffer;Bohren;10;true;false
-12;Winkelschleifer Bosch GWS 18V-10;125 mm Akku-Winkelschleifer mit Absaughaube;Trennen;5;true;false
-13;Kabelzugset Katimex Kabelmax;Einziehband 60 m mit Zubehörsatz;Kabelverlegung;3;true;false
-14;Rotationslaser Bosch GRL 300 HV;Horizontal und vertikal, mit Stativ und Messlatte;Vermessung;3;true;false
-15;Stemmhammer Bosch GSH 5 CE;Abbruchhammer 5 kg, Motorschaden, nicht mehr im Einsatz;Bohren;2;false;true
+Id;InventoryNumber;Name;CategoryId;Description;StandardLendDuration;IsActive;IsRetired;NeedsMaintenance
+1;1001;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+2;1002;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+3;1003;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+4;1004;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+5;1005;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+6;1006;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+7;1007;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+8;1008;Digitalmultimeter Fluke 87V;1;Handmultimeter für Störungssuche im Feld;7;true;false;false
+9;1009;Zangenamperemeter Fluke 376 FC;1;Echteffektivwert bis 1000 A mit flexibler Stromzange;7;true;false;true
+10;1010;Zangenamperemeter Fluke 376 FC;1;Echteffektivwert bis 1000 A mit flexibler Stromzange;7;true;false;false
+11;1011;Zangenamperemeter Fluke 376 FC;1;Echteffektivwert bis 1000 A mit flexibler Stromzange;7;true;false;false
+12;1012;Zangenamperemeter Fluke 376 FC;1;Echteffektivwert bis 1000 A mit flexibler Stromzange;7;true;false;false
+13;1013;Zangenamperemeter Fluke 376 FC;1;Echteffektivwert bis 1000 A mit flexibler Stromzange;7;true;false;false
+14;1014;Zangenamperemeter Fluke 376 FC;1;Echteffektivwert bis 1000 A mit flexibler Stromzange;7;true;false;false
+15;1015;Isolationsmessgerät Fluke 1507;1;Isolationswiderstandsmessung bis 1000 V im Koffer;3;true;false;false
+16;1016;Isolationsmessgerät Fluke 1507;1;Isolationswiderstandsmessung bis 1000 V im Koffer;3;true;false;false
+17;1017;Isolationsmessgerät Fluke 1507;1;Isolationswiderstandsmessung bis 1000 V im Koffer;3;true;false;false
+18;1018;Isolationsmessgerät Fluke 1507;1;Isolationswiderstandsmessung bis 1000 V im Koffer;3;false;true;false
+19;1019;Isolationsmessgerät Fluke 1507;1;Isolationswiderstandsmessung bis 1000 V im Koffer;3;true;false;false
+20;1020;Spannungsprüfer Benning Duspol expert;1;Zweipoliger Spannungsprüfer mit Drehfeldanzeige;14;true;false;false
+21;1021;Spannungsprüfer Benning Duspol expert;1;Zweipoliger Spannungsprüfer mit Drehfeldanzeige;14;true;false;false
+22;1022;Spannungsprüfer Benning Duspol expert;1;Zweipoliger Spannungsprüfer mit Drehfeldanzeige;14;true;false;false
+23;1023;Spannungsprüfer Benning Duspol expert;1;Zweipoliger Spannungsprüfer mit Drehfeldanzeige;14;true;false;false
+24;1024;Spannungsprüfer Benning Duspol expert;1;Zweipoliger Spannungsprüfer mit Drehfeldanzeige;14;true;false;false
+25;1025;Spannungsprüfer Benning Duspol expert;1;Zweipoliger Spannungsprüfer mit Drehfeldanzeige;14;true;false;false
+26;1026;Netzanalysator Fluke 1748;1;Dreiphasige Netzqualitätsanalyse für Langzeitmessungen;14;true;false;false
+27;1027;Netzanalysator Fluke 1748;1;Dreiphasige Netzqualitätsanalyse für Langzeitmessungen;14;true;false;false
+28;1028;Netzanalysator Fluke 1748;1;Dreiphasige Netzqualitätsanalyse für Langzeitmessungen;14;true;false;false
+29;1029;Installationstester Profitest MTECH;2;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;5;true;false;false
+30;1030;Installationstester Profitest MTECH;2;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;5;true;false;false
+31;1031;Installationstester Profitest MTECH;2;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;5;true;false;true
+32;1032;Installationstester Profitest MTECH;2;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;5;true;false;false
+33;1033;Installationstester Profitest MTECH;2;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;5;true;false;false
+34;1034;Installationstester Profitest MTECH;2;Prüfung ortsfester Anlagen nach DIN VDE 0100-600;5;true;false;false
+35;1035;Gerätetester Secutest Base;2;Wiederholungsprüfung ortsveränderlicher Geräte;5;true;false;false
+36;1036;Gerätetester Secutest Base;2;Wiederholungsprüfung ortsveränderlicher Geräte;5;true;false;false
+37;1037;Gerätetester Secutest Base;2;Wiederholungsprüfung ortsveränderlicher Geräte;5;true;false;false
+38;1038;Gerätetester Secutest Base;2;Wiederholungsprüfung ortsveränderlicher Geräte;5;true;false;false
+39;1039;RCD-Prüfadapter Benning IT 130;2;Auslöseprüfung von Fehlerstromschutzschaltern;7;true;false;false
+40;1040;RCD-Prüfadapter Benning IT 130;2;Auslöseprüfung von Fehlerstromschutzschaltern;7;true;false;false
+41;1041;RCD-Prüfadapter Benning IT 130;2;Auslöseprüfung von Fehlerstromschutzschaltern;7;true;false;false
+42;1042;RCD-Prüfadapter Benning IT 130;2;Auslöseprüfung von Fehlerstromschutzschaltern;7;true;false;false
+43;1043;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+44;1044;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+45;1045;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+46;1046;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+47;1047;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+48;1048;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+49;1049;Bohrhammer Hilti TE 30-AVR;3;SDS-Plus Kombihammer mit Vibrationsdämpfung;5;true;false;false
+50;1050;Kernbohrgerät Hilti DD 150-U;3;Diamantkernbohren bis 162 mm inklusive Wasserfangring;2;true;false;false
+51;1051;Kernbohrgerät Hilti DD 150-U;3;Diamantkernbohren bis 162 mm inklusive Wasserfangring;2;true;false;false
+52;1052;Kernbohrgerät Hilti DD 150-U;3;Diamantkernbohren bis 162 mm inklusive Wasserfangring;2;true;false;false
+53;1053;Stemmhammer Bosch GSH 5 CE;3;Abbruchhammer 5 kg für Schlitzarbeiten;2;true;false;false
+54;1054;Stemmhammer Bosch GSH 5 CE;3;Abbruchhammer 5 kg für Schlitzarbeiten;2;true;false;false
+55;1055;Stemmhammer Bosch GSH 5 CE;3;Abbruchhammer 5 kg für Schlitzarbeiten;2;true;false;false
+56;1056;Stemmhammer Bosch GSH 5 CE;3;Abbruchhammer 5 kg für Schlitzarbeiten;2;true;false;false
+57;1057;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;false
+58;1058;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;true
+59;1059;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;false
+60;1060;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;false
+61;1061;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;false
+62;1062;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;false
+63;1063;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;true;false;false
+64;1064;Akku-Bohrhammer Makita DHR243;3;18 V SDS-Plus Bohrhammer mit Absaugung;5;false;true;false
+65;1065;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+66;1066;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+67;1067;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+68;1068;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+69;1069;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+70;1070;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+71;1071;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+72;1072;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+73;1073;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+74;1074;Akku-Bohrschrauber Makita DDF484;4;18 V mit zwei Akkus und Ladegerät im Koffer;10;true;false;false
+75;1075;Akku-Schlagschrauber Makita DTD153;4;18 V Schlagschrauber für Befestigungsarbeiten;10;true;false;false
+76;1076;Akku-Schlagschrauber Makita DTD153;4;18 V Schlagschrauber für Befestigungsarbeiten;10;true;false;false
+77;1077;Akku-Schlagschrauber Makita DTD153;4;18 V Schlagschrauber für Befestigungsarbeiten;10;true;false;true
+78;1078;Akku-Schlagschrauber Makita DTD153;4;18 V Schlagschrauber für Befestigungsarbeiten;10;true;false;false
+79;1079;Akku-Schlagschrauber Makita DTD153;4;18 V Schlagschrauber für Befestigungsarbeiten;10;true;false;false
+80;1080;Drehmomentschrauber Wera Click-Torque;4;Einstellbar 2 bis 12 Nm für Klemmstellen;7;true;false;false
+81;1081;Drehmomentschrauber Wera Click-Torque;4;Einstellbar 2 bis 12 Nm für Klemmstellen;7;true;false;false
+82;1082;Drehmomentschrauber Wera Click-Torque;4;Einstellbar 2 bis 12 Nm für Klemmstellen;7;true;false;false
+83;1083;Winkelschleifer Bosch GWS 18V-10;5;125 mm Akku-Winkelschleifer mit Absaughaube;5;true;false;false
+84;1084;Winkelschleifer Bosch GWS 18V-10;5;125 mm Akku-Winkelschleifer mit Absaughaube;5;true;false;false
+85;1085;Winkelschleifer Bosch GWS 18V-10;5;125 mm Akku-Winkelschleifer mit Absaughaube;5;true;false;false
+86;1086;Winkelschleifer Bosch GWS 18V-10;5;125 mm Akku-Winkelschleifer mit Absaughaube;5;true;false;false
+87;1087;Winkelschleifer Bosch GWS 18V-10;5;125 mm Akku-Winkelschleifer mit Absaughaube;5;true;false;false
+88;1088;Winkelschleifer Bosch GWS 18V-10;5;125 mm Akku-Winkelschleifer mit Absaughaube;5;true;false;false
+89;1089;Akku-Säbelsäge Makita DJR187;5;18 V Säbelsäge für Kabelkanäle und Rohre;5;true;false;false
+90;1090;Akku-Säbelsäge Makita DJR187;5;18 V Säbelsäge für Kabelkanäle und Rohre;5;true;false;false
+91;1091;Akku-Säbelsäge Makita DJR187;5;18 V Säbelsäge für Kabelkanäle und Rohre;5;true;false;false
+92;1092;Trennschleifer Metabo CS 23-355;5;Stationärer Trennschleifer für Profilschienen;3;true;false;false
+93;1093;Trennschleifer Metabo CS 23-355;5;Stationärer Trennschleifer für Profilschienen;3;true;false;false
+94;1094;Trennschleifer Metabo CS 23-355;5;Stationärer Trennschleifer für Profilschienen;3;true;false;false
+95;1095;Rotationslaser Bosch GRL 300 HV;6;Horizontal und vertikal mit Stativ und Messlatte;3;false;true;false
+96;1096;Rotationslaser Bosch GRL 300 HV;6;Horizontal und vertikal mit Stativ und Messlatte;3;true;false;false
+97;1097;Rotationslaser Bosch GRL 300 HV;6;Horizontal und vertikal mit Stativ und Messlatte;3;true;false;false
+98;1098;Rotationslaser Bosch GRL 300 HV;6;Horizontal und vertikal mit Stativ und Messlatte;3;true;false;false
+99;1099;Kreuzlinienlaser Bosch GLL 3-80;6;Drei 360-Grad-Linien für Innenausbau;5;true;false;false
+100;1100;Kreuzlinienlaser Bosch GLL 3-80;6;Drei 360-Grad-Linien für Innenausbau;5;true;false;false
+101;1101;Kreuzlinienlaser Bosch GLL 3-80;6;Drei 360-Grad-Linien für Innenausbau;5;true;false;false
+102;1102;Kreuzlinienlaser Bosch GLL 3-80;6;Drei 360-Grad-Linien für Innenausbau;5;true;false;true
+103;1103;Laserentfernungsmesser Leica Disto D2;6;Messbereich bis 100 m für Aufmaß beim Kunden;5;true;false;false
+104;1104;Laserentfernungsmesser Leica Disto D2;6;Messbereich bis 100 m für Aufmaß beim Kunden;5;true;false;false
+105;1105;Kabelzugset Katimex Kabelmax;7;Einziehband 60 m mit Zubehörsatz;3;true;false;false
+106;1106;Kabelzugset Katimex Kabelmax;7;Einziehband 60 m mit Zubehörsatz;3;true;false;false
+107;1107;Kabelzugset Katimex Kabelmax;7;Einziehband 60 m mit Zubehörsatz;3;true;false;false
+108;1108;Hydraulische Kabelschere Klauke ES32;7;Schneiden von Kupferkabeln bis 32 mm;2;true;false;false
+109;1109;Hydraulische Kabelschere Klauke ES32;7;Schneiden von Kupferkabeln bis 32 mm;2;true;false;false
+110;1110;Aderendhülsenzange Rennsteig PEW 12;7;Crimpzange für Aderendhülsen 0,25 bis 16 mm²;14;true;false;false
+111;1111;Aderendhülsenzange Rennsteig PEW 12;7;Crimpzange für Aderendhülsen 0,25 bis 16 mm²;14;true;false;false
+112;1112;Aderendhülsenzange Rennsteig PEW 12;7;Crimpzange für Aderendhülsen 0,25 bis 16 mm²;14;true;false;false
+113;1113;Aderendhülsenzange Rennsteig PEW 12;7;Crimpzange für Aderendhülsen 0,25 bis 16 mm²;14;true;false;false
+114;1114;Wärmebildkamera Testo 872;8;320 x 240 Pixel für Thermografie an Schaltanlagen;2;true;false;false
+115;1115;Wärmebildkamera Testo 872;8;320 x 240 Pixel für Thermografie an Schaltanlagen;2;true;false;false
+116;1116;Wärmebildkamera Testo 872;8;320 x 240 Pixel für Thermografie an Schaltanlagen;2;true;false;false
+117;1117;Leitungssucher Amprobe AT-6030;8;Ortung stromführender und spannungsloser Leitungen;3;true;false;false
+118;1118;Leitungssucher Amprobe AT-6030;8;Ortung stromführender und spannungsloser Leitungen;3;true;false;false
+119;1119;Kabelsuchgerät Fluke 2042;8;Leitungsverfolgung in Wand und Estrich;3;true;false;false
+120;1120;Kabelsuchgerät Fluke 2042;8;Leitungsverfolgung in Wand und Estrich;3;true;false;false

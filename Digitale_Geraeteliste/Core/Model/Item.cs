@@ -16,5 +16,7 @@ namespace Digitale_Geraeteliste.Core.Model
         public bool IsActive { get; set; }
         public bool IsRetired { get; set; }
         public bool NeedsMaintenance { get; set; }
+
+        private Item() { }
     }
 }

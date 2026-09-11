@@ -26,6 +26,7 @@ namespace Digitale_Geraeteliste.Core.Model
             Item = item;
             LendBy = lendBy;
         }
+        private LendItem() { }
 
         public void LendItemToEmployee(Employee employee, DateTime dateTime)
         {
