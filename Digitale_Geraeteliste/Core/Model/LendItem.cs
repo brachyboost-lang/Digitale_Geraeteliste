@@ -20,7 +20,7 @@ namespace Digitale_Geraeteliste.Core.Model
         public bool IsOverdue => IsOverdueAt(DateTime.Now.Date);
         public string AffiliatedContractNumber { get; set; } = string.Empty;
         
-        public LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy)
+        public LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy, string affiliatedContractNumber)
         {
             Id = id;
             LendDate = lendDate;
@@ -28,6 +28,7 @@ namespace Digitale_Geraeteliste.Core.Model
             BorrowedBy = borrowedBy;
             Item = item;
             LendBy = lendBy;
+            AffiliatedContractNumber = affiliatedContractNumber;
         }
         private LendItem() { }
 
