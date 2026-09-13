@@ -19,7 +19,7 @@ namespace Digitale_Geraeteliste.Core.Model
         public bool IsActive { get; set; } = true;
         public bool IsOverdue => IsOverdueAt(DateTime.Now.Date);
         public string AffiliatedContractNumber { get; set; } = string.Empty;
-        
+
         public LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy, string affiliatedContractNumber)
         {
             Id = id;
@@ -30,21 +30,47 @@ namespace Digitale_Geraeteliste.Core.Model
             LendBy = lendBy;
             AffiliatedContractNumber = affiliatedContractNumber;
         }
+        public LendItem(int id, DateTime lendDate, DateTime expectedReturnDate, Employee borrowedBy, Item item, Employee lendBy, string affiliatedContractNumber, DateTime? actualReturnDate)
+        {
+            Id = id;
+            LendDate = lendDate;
+            ExpectedReturnDate = expectedReturnDate;
+            BorrowedBy = borrowedBy;
+            Item = item;                                                // Constructor for Import of old data from CSV file
+            LendBy = lendBy;
+            AffiliatedContractNumber = affiliatedContractNumber;
+            ActualReturnDate = actualReturnDate;
+        }
+
         private LendItem() { }
 
-        public void LendItemToEmployee(Employee employee, DateTime dateTime)
+        public void LendItemToEmployee(Employee employee, DateTime lendDate, Item item, Employee lendBy, string affiliatedContractNumber, int id)
         {
             BorrowedBy = employee;
-            LendDate = dateTime;
+            LendDate = lendDate;
             ExpectedReturnDate = LendDate.AddDays(Item.StandardLendDuration);
+            Id = id;
+            Item = item;
+            LendBy = lendBy;
+            AffiliatedContractNumber = affiliatedContractNumber;
         }
 
-        public void LendItemToEmployee(Employee employee, DateTime dateTime, int duration)
+        public void LendItemToEmployee(Employee employee, DateTime lendDate, Item item, Employee lendBy, string affiliatedContractNumber, int id, int duration)
         {
             BorrowedBy = employee;
-            LendDate = dateTime;
+            LendDate = lendDate;
             ExpectedReturnDate = LendDate.AddDays(duration);
+            Id = id;
+            Item = item;
+            LendBy = lendBy;
+            AffiliatedContractNumber = affiliatedContractNumber;
         }
         public bool IsOverdueAt(DateTime dayToCheck) => ActualReturnDate == null && dayToCheck > ExpectedReturnDate;
+
+        public void ReturnItem(DateTime returnDate)
+        {
+            ActualReturnDate = returnDate;
+            IsActive = false;
+        }
     }
 }
