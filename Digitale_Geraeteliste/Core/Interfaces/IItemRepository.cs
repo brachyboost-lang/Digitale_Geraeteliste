@@ -11,6 +11,7 @@ namespace Digitale_Geraeteliste.Core.Interfaces
         public abstract Item GetItemById(int id);
         public abstract IEnumerable<Item> GetAllItems();
         public abstract void SaveItem(Item item);
+        public abstract bool CheckInventoryNumberDuplicate(string inventoryNumber);
 
     }
 }
