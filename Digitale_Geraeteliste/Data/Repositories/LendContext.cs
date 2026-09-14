@@ -25,7 +25,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
-            // OnDelete behaviour to restrict to prevent cascade delete, for all relationships
+            // OnDelete behaviour to prevent cascade delete
             modelBuilder.Entity<LendItem>()
                 .HasOne(i => i.BorrowedBy)
                 .WithMany()
