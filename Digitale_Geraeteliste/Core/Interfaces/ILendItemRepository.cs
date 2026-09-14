@@ -15,6 +15,5 @@ namespace Digitale_Geraeteliste.Core.Interfaces
         void SaveLendItem(LendItem lendItem);
         void ReturnLendItem(int lendItemId, DateTime returnDate);
         IEnumerable<LendItem> GetAllOverdueLendItems();
-
     }
 }

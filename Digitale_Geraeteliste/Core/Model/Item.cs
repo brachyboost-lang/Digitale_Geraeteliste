@@ -15,7 +15,7 @@ namespace Digitale_Geraeteliste.Core.Model
         public int CategoryId { get; set; } // FK
         public string Description { get; set; } = string.Empty;
         public int StandardLendDuration { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsInUse { get; set; }
         public bool IsRetired { get; set; }
         public bool NeedsMaintenance { get; set; }
 
