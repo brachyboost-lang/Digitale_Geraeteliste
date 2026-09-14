@@ -19,15 +19,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             if (!options.IsConfigured)
             {
-                var path = Path.Combine(AppContext.BaseDirectory, "Data", "db", "Digitale_Geraeteliste.db");
+                var path = Path.Combine(AppContext.BaseDirectory, "Digitale_Geraeteliste.db");
                 options.UseSqlite($"Data Source={path}");
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder) { }
-
-        public LendContext()
-        {
-
-        }
     }
 }
