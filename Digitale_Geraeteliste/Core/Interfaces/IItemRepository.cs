@@ -8,10 +8,10 @@ namespace Digitale_Geraeteliste.Core.Interfaces
 {
     public interface IItemRepository
     {
-        public abstract Item GetItemById(int id);
-        public abstract IEnumerable<Item> GetAllItems();
-        public abstract void SaveItem(Item item);
-        public abstract bool CheckInventoryNumberDuplicate(string inventoryNumber);
+        Item GetItemById(int id);
+        IEnumerable<Item> GetAllItems();
+        void SaveItem(Item item);
+        bool CheckInventoryNumberDuplicate(string inventoryNumber);
 
     }
 }
