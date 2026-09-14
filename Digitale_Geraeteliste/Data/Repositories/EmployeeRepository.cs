@@ -8,10 +8,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     internal class EmployeeRepository : IEmployeeRepository
     {
-        private readonly LendContext Context;
+        private readonly LendContext _context;
         public EmployeeRepository(LendContext context)
         {
-            Context = context;
+            _context = context;
         }
         public Employee ChangeEmployee(Employee employee, string firstName, string lastName, string email, string phoneNumber, string department)
         {

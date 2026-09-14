@@ -8,10 +8,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     internal class LendItemRepository : ILendItemRepository
     {
-        private readonly LendContext Context;
+        private readonly LendContext _context;
         public LendItemRepository(LendContext context)
         {
-            Context = context;
+            _context = context;
         }
         public void ChangeLendItem(LendItem lendItem, int itemId, int employeeId, DateTime lendDate, DateTime returnDate)
         {

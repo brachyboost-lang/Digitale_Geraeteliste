@@ -10,10 +10,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     internal class ItemRepository : IItemRepository
     {
-        private readonly LendContext Context;
+        private readonly LendContext _context;
         public ItemRepository(LendContext context)
         {
-            Context = context;
+            _context = context;
         }
         public Item GetItemById(int id)
         {
@@ -30,7 +30,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         public IEnumerable<Item> GetAllItems()
         {
-            return Context.Items.Include(i => i.Category).ToList();
+            return _context.Items.Include(i => i.Category).ToList();
         }
         public void ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isInUse, bool isRetired, bool needsMaintenance)
         {
@@ -61,8 +61,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public void UpdateItem(Item item)
         {
-            Context.Items.Update(item);
-            Context.SaveChanges();
+            _context.Items.Update(item);
+            _context.SaveChanges();
         }
     }
 }
