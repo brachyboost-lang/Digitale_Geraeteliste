@@ -11,10 +11,13 @@ namespace Digitale_Geraeteliste
     public partial class App : Application
     {
         LendContext lendContext = new LendContext();
-        EmployeeRepository employeeContext = new EmployeeRepository(lendContext);
-        ItemRepository itemContext = new ItemRepository(lendContext);
-        LendItemRepository lendItemContext = new LendItemRepository(lendContext);
-
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            EmployeeRepository employeeContext = new EmployeeRepository(lendContext);
+            ItemRepository itemContext = new ItemRepository(lendContext);
+            LendItemRepository lendItemContext = new LendItemRepository(lendContext);
+        }
     }
 
 }
