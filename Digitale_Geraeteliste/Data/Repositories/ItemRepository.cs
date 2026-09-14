@@ -32,7 +32,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             return _context.Items.Include(i => i.Category).ToList();
         }
-        public void ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isInUse, bool isRetired, bool needsMaintenance)
+        public void ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isRetired, bool needsMaintenance)
         {
             Item itemToChange = GetItemById(item.Id);
             itemToChange.InventoryNumber = inventoryNumber;
@@ -41,7 +41,6 @@ namespace Digitale_Geraeteliste.Data.Repositories
             itemToChange.CategoryId = category.Id;
             itemToChange.Description = description;
             itemToChange.StandardLendDuration = standardLendDuration;
-            itemToChange.IsInUse = isInUse;
             itemToChange.IsRetired = isRetired;
             itemToChange.NeedsMaintenance = needsMaintenance;
             try

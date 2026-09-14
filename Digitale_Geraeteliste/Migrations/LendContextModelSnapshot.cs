@@ -42,6 +42,9 @@ namespace Digitale_Geraeteliste.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -75,9 +78,6 @@ namespace Digitale_Geraeteliste.Migrations
                     b.Property<string>("InventoryNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsInUse")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsRetired")
                         .HasColumnType("INTEGER");

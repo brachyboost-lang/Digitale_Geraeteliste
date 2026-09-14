@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Digitale_Geraeteliste.Migrations
 {
     [DbContext(typeof(LendContext))]
-    [Migration("20260914105809_InitialCreate")]
+    [Migration("20260914220959_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -43,6 +43,9 @@ namespace Digitale_Geraeteliste.Migrations
 
                     b.Property<string>("Department")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
@@ -78,9 +81,6 @@ namespace Digitale_Geraeteliste.Migrations
                     b.Property<string>("InventoryNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsInUse")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsRetired")
                         .HasColumnType("INTEGER");

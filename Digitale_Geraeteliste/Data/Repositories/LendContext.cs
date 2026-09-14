@@ -23,6 +23,29 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 options.UseSqlite($"Data Source={path}");
             }
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder) { }
+        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        {
+            // OnDelete behaviour to restrict to prevent cascade delete, for all relationships
+            modelBuilder.Entity<LendItem>()
+                .HasOne(i => i.BorrowedBy)
+                .WithMany()
+                .HasForeignKey(li => li.BorrowedById)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<LendItem>()
+                .HasOne(i => i.LendBy)
+                .WithMany()
+                .HasForeignKey(li => li.LendById)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<LendItem>()
+                .HasOne(i => i.Item)
+                .WithMany()
+                .HasForeignKey(li => li.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Item>()
+                .HasOne(i => i.Category)
+                .WithMany()
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
