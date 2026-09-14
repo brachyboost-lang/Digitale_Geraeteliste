@@ -6,8 +6,26 @@ um die Syntax, die dort vorausgesetzt wird. Jeder Abschnitt erklärt ein Konzept
 Beispiel mit einer **anderen** Entität als der, die umgesetzt werden soll, und endet mit einer
 Aufgabe und Leitfragen. Lösungen stehen hier bewusst nicht.
 
-Stand beim Schreiben: `LendContext` erbt von `DbContext` und hat vier `DbSet`s, `OnConfiguring` ist
-leer, es gibt noch keine Migration, `ItemRepository` ist teilweise implementiert.
+## Aktueller Stand
+
+| Baustein | Stand |
+|---|---|
+| `LendContext` mit vier `DbSet`s | erledigt |
+| `OnConfiguring` mit `UseSqlite` | **offen**, Schritt 1 |
+| Öffentliche Konstruktoren für `Item` und `Category` | **offen**, Schritt 2a |
+| Entscheidung `IsInUse` / `IsActive` | **offen**, Schritt 2b |
+| Erste Migration und Sichtprüfung der Datenbank | **offen**, Schritt 3 |
+| Kontext wird ins Repository übergeben | **offen**, Schritt 4 |
+| `GetAllItems` mit `Include(i => i.Category)` | erledigt |
+| `GetItemById` | umgesetzt, Überarbeitung empfohlen, Schritt 5 |
+| `UpdateItem` mit `Update` und `SaveChanges` | umgesetzt, Hinweise in 1.5 und Schritt 5 |
+| `ChangeItem` | umgesetzt, Entscheidung offen, Schritt 5 |
+| `CheckInventoryNumberDuplicate` | **offen**, Schritt 5 |
+
+**Wichtig zur Reihenfolge:** Das Repository ist schon weiter als die Schritte 1 bis 3. Solange
+`OnConfiguring` leer ist und keine Migration existiert, kann keine Methode im Repository tatsächlich
+ausgeführt werden. Jeder Aufruf endet mit `No database provider has been configured`. Die Methoden
+lassen sich also erst prüfen, wenn Schritt 1 bis 3 erledigt sind.
 
 ---
 
@@ -35,12 +53,13 @@ nicht ausgemustert ist.
 
 Leitfrage zu (c): Welcher Operator verknüpft zwei Bedingungen, die beide gelten müssen?
 
-### 1.2 Die fünf LINQ-Methoden, die du brauchst
+### 1.2 Die LINQ-Methoden, die du brauchst
 
 | Methode | Liefert | Frage, die sie beantwortet |
 |---|---|---|
 | `Where(lambda)` | eine Menge | Welche Elemente erfüllen die Bedingung? |
-| `FirstOrDefault(lambda)` | ein Element oder `null` | Welches ist das erste, das passt? |
+| `First(lambda)` | genau ein Element, **wirft eine Exception**, wenn keines passt | Welches ist das erste? Ich bin sicher, dass es eines gibt. |
+| `FirstOrDefault(lambda)` | ein Element oder `null` | Welches ist das erste, falls es eines gibt? |
 | `Any(lambda)` | `bool` | Gibt es mindestens eines, das passt? |
 | `OrderBy(lambda)` | eine sortierte Menge | In welcher Reihenfolge? Hier liefert das Lambda den Sortierwert, nicht `true`/`false`. |
 | `ToList()` | eine `List<T>` | Jetzt wirklich ausführen und alles einsammeln. |
@@ -53,7 +72,11 @@ var sortiert = categories.Where(c => c.Name.StartsWith("M")).OrderBy(c => c.Name
 
 Methoden lassen sich hintereinanderhängen. Jede arbeitet mit dem Ergebnis der vorigen.
 
-**Aufgabe:** Welche der fünf Methoden brauchst du für die Frage "Ist die Inventarnummer 1042 schon
+Der Unterschied zwischen `First` und `FirstOrDefault` ist eine Aussage über deine Erwartung. Mit
+`First` sagst du: "Wenn es keinen Treffer gibt, ist etwas grundlegend kaputt." Mit `FirstOrDefault`
+sagst du: "Kein Treffer ist ein normaler Fall, um den sich der Aufrufer kümmert." Mehr dazu in 1.6.
+
+**Aufgabe:** Welche Methode brauchst du für die Frage "Ist die Inventarnummer 1042 schon
 vergeben?" Welche für "Gib mir das Gerät mit der Id 17"? Und warum wäre `Where` bei der zweiten
 Frage die umständlichere Wahl?
 
@@ -63,8 +86,8 @@ Dieselbe LINQ-Schreibweise funktioniert auf einer normalen Liste und auf einem `
 passiert, ist aber grundverschieden.
 
 Auf einem `DbSet` wird **nichts sofort ausgeführt**. EF sammelt die Aufrufe und übersetzt sie in
-**eine** SQL-Abfrage. Erst Methoden wie `ToList()`, `FirstOrDefault()` oder `Any()` schicken diese
-Abfrage tatsächlich an die Datenbank.
+**eine** SQL-Abfrage. Erst Methoden wie `ToList()`, `First()`, `FirstOrDefault()` oder `Any()`
+schicken diese Abfrage tatsächlich an die Datenbank.
 
 ```csharp
 context.Categories.Where(c => c.Name == "Messtechnik").ToList();
@@ -76,8 +99,11 @@ nur der eine Treffer kommt zurück.
 Nach einem `ToList()` liegt eine normale Liste im Arbeitsspeicher, und alles Weitere läuft in C#.
 
 Daraus folgt eine Regel: **Erst filtern, dann `ToList()`.** Die umgekehrte Reihenfolge lädt die
-ganze Tabelle, um danach einen Datensatz herauszusuchen. Genau das passiert aktuell in
-`GetItemById` und `CheckInventoryNumberDuplicate`, weil beide zuerst `GetAllItems()` aufrufen.
+ganze Tabelle, um danach einen Datensatz herauszusuchen.
+
+Genau das passiert aktuell in `GetItemById` und `CheckInventoryNumberDuplicate`: Beide rufen
+`GetAllItems()` auf, und das endet mit `ToList()`. Die Suche mit `First` bzw. `Any` läuft danach
+auf einer Liste im Speicher, nicht in der Datenbank.
 
 Eine zweite Folge: EF kann nur übersetzen, was es als Spalte kennt. Eine berechnete C#-Property wie
 `LendItem.IsOverdue` existiert in der Datenbank nicht. Eine Abfrage `Where(l => l.IsOverdue)` direkt
@@ -87,6 +113,9 @@ Bedingung deshalb aus echten Spalten zusammengesetzt werden.
 **Aufgabe:** Erkläre in einem Satz, warum `context.Items.ToList().Any(...)` und
 `context.Items.Any(...)` dasselbe Ergebnis liefern, sich aber bei 100.000 Geräten sehr
 unterschiedlich verhalten.
+
+**Aufgabe:** Wie sieht `GetItemById` aus, wenn die Abfrage direkt auf `Context.Items` läuft? Welche
+Zeile deiner jetzigen Methode fällt dann weg?
 
 ### 1.4 Include: verknüpfte Objekte mitladen
 
@@ -101,20 +130,25 @@ context.LendItems.Include(l => l.BorrowedBy).ToList();
 Entität ist. Für normale Spalten wie `string` oder `int` ist es nicht nötig und nicht erlaubt,
 die werden immer geladen.
 
-**Aufgabe:** In `ItemRepository.GetAllItems` steht aktuell `Include(i => i.Name)`. Das kompiliert,
-wirft beim ersten Aufruf aber eine `InvalidOperationException`. Warum? Welche Property von `Item`
-wäre an dieser Stelle die richtige, und brauchst du sie für die Bestandsübersicht (A5) überhaupt?
+**Erledigt:** `GetAllItems` verwendet jetzt `Include(i => i.Category)`.
 
-### 1.5 Speichern: Add, Änderungen verfolgen, SaveChanges
+**Aufgabe zum Weiterdenken:** Wenn `GetItemById` direkt auf `Context.Items` abfragt statt über
+`GetAllItems`, fehlt das `Include` dort. Brauchst du die Kategorie beim Laden eines einzelnen Geräts?
+Denk an den Bearbeiten-Dialog aus A1, der die Kategorie anzeigt.
 
-Der `DbContext` merkt sich jedes Objekt, das er geladen hat. Änderst du danach eine Property, sieht
-er das selbst. Es gibt kein `Update` im üblichen Sinn.
+### 1.5 Speichern: Add, Update, SaveChanges
+
+Der `DbContext` merkt sich jedes Objekt, das er geladen hat. Diesen Zustand nennt EF **tracked**.
+Änderst du danach eine Property, sieht der Kontext das selbst:
 
 ```csharp
 var cat = context.Categories.First(c => c.Id == 3);
 cat.Name = "Bohren";
 context.SaveChanges();
 ```
+
+Hier steht kein `Update`. Der Kontext hat die Kategorie geladen, er weiß also, dass sich `Name`
+geändert hat, und `SaveChanges` schreibt genau diese eine Spalte.
 
 Neue Objekte kennt der Kontext noch nicht. Die werden mit `Add` angemeldet:
 
@@ -126,9 +160,72 @@ context.SaveChanges();
 Beim `Add` darf die `Id` 0 sein. SQLite vergibt sie, und nach `SaveChanges` steht der vergebene Wert
 im Objekt.
 
-**Aufgabe:** Ein Repository hat eine Methode `Save(Item item)`. Sie soll für neue **und** bestehende
-Geräte funktionieren. Woran erkennst du im Code, ob ein übergebenes Gerät neu ist? Was muss in
-beiden Fällen passieren, und was nur in einem?
+**`Update` ist für Objekte gedacht, die der Kontext nicht kennt.** Etwa ein Objekt, das aus einem
+anderen Kontext stammt oder im Code neu zusammengebaut wurde. `Update` meldet es an und markiert
+**alle** Spalten als geändert, auch die, die gleich geblieben sind. Hat das Objekt noch die `Id` 0,
+behandelt EF es sogar als neu und legt es an.
+
+Deine Methode `UpdateItem` verwendet `Update` plus `SaveChanges`. Das funktioniert und deckt durch
+das eben beschriebene Verhalten sowohl neue als auch bestehende Geräte ab. In `ChangeItem` lädst du
+das Gerät aber vorher über den Kontext. Es ist also schon tracked, und `Update` wäre dort nicht
+nötig.
+
+**Aufgabe:** Beantworte für deine Methode `ChangeItem`: Nach `GetItemById` ist `itemToChange`
+tracked. Was würde passieren, wenn in `UpdateItem` nur `SaveChanges()` stünde, ohne `Update`? Und
+welchen Fall deckt `Update` ab, den `SaveChanges` allein nicht abdeckt?
+
+**Aufgabe:** Die Methode heißt `UpdateItem`, legt aber auch neue Geräte an. Passt der Name zu dem,
+was sie tut? Überlege, ob `SaveItem` den Aufrufer weniger überrascht.
+
+### 1.6 Exceptions: wann werfen, wann nicht
+
+Diesen Abschnitt gab es in der ersten Fassung nicht. Er ist durch `GetItemById` und `ChangeItem`
+dazugekommen.
+
+Eine Exception ist für Situationen gedacht, mit denen der Code an dieser Stelle nicht rechnet und
+die er nicht selbst lösen kann. "Datenbankdatei ist gesperrt" ist so ein Fall. "Zu dieser Id gibt
+es kein Gerät" ist es meistens nicht: Der Lagerist hat sich vertippt, oder das Gerät wurde gerade
+gelöscht. Das ist ein erwartbarer Ausgang, und der Aufrufer sollte ihn mit einem einfachen
+`if (item == null)` behandeln können.
+
+Deine jetzige Version von `GetItemById` macht aus "nicht gefunden" eine Exception, weil `First`
+wirft. Dazu kommen zwei Punkte am `catch`-Block:
+
+**`catch (Exception ex)` fängt alles.** Nicht nur "Gerät nicht gefunden", sondern auch "Datenbank
+nicht erreichbar" oder "Tabelle existiert nicht". Alle drei bekommen dieselbe Meldung *"Check for
+Typo or Item might not exist"*, und bei den letzten beiden führt die Meldung in die falsche Richtung.
+
+**`throw new Exception(...)` verwendet den allgemeinsten Typ.** Der Aufrufer kann dann nicht mehr
+unterscheiden, was passiert ist, außer indem er den Meldungstext auswertet. Wenn eine Exception
+nötig ist, gibt es spezifischere Typen, etwa `KeyNotFoundException` oder
+`InvalidOperationException`.
+
+Zu `ChangeItem`: Die Meldung *"Contact your system administrator"* ist ein Text für den Benutzer.
+Das Repository weiß aber nicht, wer oder was es aufruft, vielleicht ein Unit-Test, vielleicht der
+CSV-Import. Benutzertexte gehören in die Schicht, die mit dem Benutzer spricht, also später ins
+ViewModel.
+
+Die gute Nachricht: Du hast in beiden Fällen die ursprüngliche Exception als `ex` weitergegeben.
+Dadurch geht die eigentliche Fehlerursache nicht verloren. Das ist der Teil, der richtig ist.
+
+Ein Beispiel für die Alternative, an einer Kategorie:
+
+```csharp
+public Category? GetCategoryById(int id)
+{
+    return _context.Categories.FirstOrDefault(c => c.Id == id);
+}
+```
+
+Kein `try`, kein `catch`. Gibt es die Kategorie nicht, kommt `null` zurück. Tritt ein echter
+Datenbankfehler auf, fliegt die Original-Exception von EF mit ihrer eigenen, zutreffenden Meldung
+nach oben.
+
+**Aufgabe:** Welche Vorteile hat es für den Aufrufer, wenn `GetItemById` bei "nicht gefunden" `null`
+liefert statt zu werfen? Was muss sich dafür am Rückgabetyp im Interface ändern?
+
+**Aufgabe:** Gibt es in deinem Repository eine Stelle, an der ein `try`/`catch` wirklich etwas
+Sinnvolles tun könnte, also den Fehler behandelt statt ihn nur umzuverpacken?
 
 ---
 
@@ -166,12 +263,12 @@ eines neuen Geräts nach A1 kann ein `Item` erzeugen. Beide Klassen brauchen zus
 öffentlichen Konstruktor mit den fachlich nötigen Werten, so wie `Employee` ihn schon hat.
 
 Leitfrage: Welche Werte muss ein Gerät mindestens haben, damit es fachlich sinnvoll ist? Die `Id`
-gehört nicht dazu, warum?
+gehört nicht dazu, warum? Denk an 1.5 und was beim `Add` mit der `Id` passiert.
 
 **2b: IsInUse oder IsActive?** Entscheide, was die Property bedeuten soll. Wenn sie "darf
 ausgeliehen werden" meint, passt der alte Name `IsActive` besser, und die CSV-Spalte heißt auch so.
 Wenn sie "ist gerade verliehen" meint, ist sie überflüssig, weil das die offene Ausleihe schon
-aussagt.
+aussagt. Die Entscheidung betrifft auch `ChangeItem`, das den Wert als Parameter entgegennimmt.
 
 **2c: Die Warnungen CS8618.** Der Compiler warnt, dass `InventoryNumber`, `Item`, `BorrowedBy` und
 `LendBy` nach dem privaten Konstruktor `null` sein können.
@@ -213,9 +310,11 @@ dort entspricht einer Tabelle, Spalte oder Beziehung.
 
 ### Schritt 4: Das Repository bekommt den Kontext
 
-Aktuell erzeugt `ItemRepository` im Konstruktor `new LendContext()`. Warum das zu Problemen führt,
-sobald mehrere Repositories zusammenarbeiten, steht in 1.5: Jeder Kontext hat sein eigenes
-Gedächtnis.
+`ItemRepository` erzeugt im Konstruktor weiterhin `new LendContext()`. Warum das zu Problemen führt,
+sobald mehrere Repositories zusammenarbeiten, folgt aus 1.5: Jeder Kontext hat sein eigenes
+Gedächtnis. Lädt `ItemRepository` ein Gerät und `LendItemRepository` speichert eine Ausleihe mit
+diesem Gerät über seinen eigenen Kontext, kennt der zweite Kontext das Gerät nicht und versucht es
+womöglich neu anzulegen.
 
 Das Muster am Beispiel eines Kategorie-Repositorys:
 
@@ -229,47 +328,74 @@ public CategoryRepository(LendContext context)
 ```
 
 `readonly` bedeutet, dass das Feld nur im Konstruktor gesetzt werden kann. Damit ist ausgeschlossen,
-dass eine Methode später versehentlich einen anderen Kontext hineinschreibt.
+dass eine Methode später versehentlich einen anderen Kontext hineinschreibt. Der Unterstrich im
+Namen ist die übliche Kennzeichnung privater Felder in C#. Dein jetziger Name `Context` sieht aus
+wie eine Property, das macht Code schwerer lesbar.
 
 **Aufgabe:** Baue den Konstruktor von `ItemRepository` entsprechend um. Leitfrage: Wo im Programm
 wird der Kontext dann erzeugt, und wie viele Instanzen davon gibt es?
 
 ### Schritt 5: ItemRepository Methode für Methode
 
-Reihenfolge nach Schwierigkeit. Nach jeder Methode kompilieren.
+**GetAllItems** — erledigt. Nichts zu tun.
 
-**GetAllItems** — Leitfragen: Welches `DbSet` ist die Tabelle? Brauchst du ein `Include`, und wenn
-ja, welches? Wo muss `ToList()` stehen?
+**GetItemById** — umgesetzt, drei Überarbeitungen empfohlen:
 
-**GetItemById** — Frage direkt das `DbSet` ab, nicht `GetAllItems()`. Leitfrage: Was liefert
-`FirstOrDefault`, wenn es keinen Treffer gibt? Passt dazu der Rückgabetyp `Item` im Interface, oder
-müsste er `Item?` heißen? Die Warnung CS8603 in Zeile 21 ist genau dieser Hinweis.
+1. Die Abfrage direkt auf `Context.Items` stellen statt über `GetAllItems`, siehe 1.3.
+2. Das `Include` aus `GetAllItems` übernehmen, wenn die Kategorie gebraucht wird, siehe 1.4.
+3. Entscheiden, ob "nicht gefunden" eine Exception oder `null` sein soll, siehe 1.6. Wenn `null`:
+   `FirstOrDefault`, Rückgabetyp `Item?` im Interface und in der Klasse, `try`/`catch` entfällt.
 
-**CheckInventoryNumberDuplicate** — Das Interface braucht einen zweiten Parameter, die Id des
-gerade bearbeiteten Geräts. Leitfragen: Warum meldet die aktuelle Version ein Duplikat, wenn man ein
-bestehendes Gerät speichert, ohne die Nummer zu ändern? Wie sieht ein `Any`-Lambda aus, das "gleiche
-Nummer **und** andere Id" prüft? Welchen Wert übergibt man bei einem neuen Gerät, das noch keine
-Id hat?
+Leitfrage: Die Compiler-Warnung CS8603 aus der vorigen Fassung ist verschwunden. Warum? Hat sich das
+zugrunde liegende Problem damit gelöst, oder nur verlagert?
 
-**SaveItem** — Die Aufgabe aus 1.5 umsetzen.
+**UpdateItem** — umgesetzt und funktionsfähig. Zu prüfen sind nur die Fragen aus 1.5: Name, und ob
+`Update` in allen Aufrufsituationen nötig ist.
 
-**ChangeItem** — Streichen, aus Interface und Klasse. Das Ändern passiert am Objekt: laden,
-Properties setzen, `SaveItem` aufrufen. Wer das koordiniert, ist später Service oder ViewModel.
+**ChangeItem** — umgesetzt. Hier ist eine Entscheidung offen, die du bewusst treffen und in der Doku
+begründen solltest:
+
+- **Variante A: Behalten.** Dann ist das Repository mehr als Datenzugriff, es kennt auch den
+  Bearbeitungsvorgang. Das ist in kleinen Projekten verbreitet und vertretbar.
+- **Variante B: Streichen.** Dann lädt der Aufrufer das Gerät, setzt die Properties selbst und ruft
+  `UpdateItem` bzw. `SaveItem` auf. Das Repository bleibt reiner Datenzugriff.
+
+Unabhängig davon enthält die jetzige Fassung eine Doppelung. Die Methode bekommt ein fertiges `item`
+übergeben, lädt dann aber über `GetItemById(item.Id)` ein zweites Mal dasselbe Gerät. Leitfrage: Wenn
+`item` aus demselben Kontext geladen wurde, sind `item` und `itemToChange` dann zwei Objekte oder
+dasselbe? Was folgt daraus für die Signatur der Methode, reicht vielleicht die Id?
+
+Und zum `catch`-Block: siehe 1.6, Benutzertexte gehören nicht ins Repository.
+
+**CheckInventoryNumberDuplicate** — noch offen. Zwei Punkte:
+
+1. Wie bei `GetItemById` direkt auf `Context.Items` abfragen, siehe 1.3.
+2. Der fachliche Fehler: Beim Bearbeiten eines Geräts, dessen Nummer unverändert bleibt, findet `Any`
+   das Gerät selbst und meldet ein Duplikat. Das Interface braucht einen zweiten Parameter, die Id
+   des gerade bearbeiteten Geräts.
+
+Leitfragen: Wie sieht ein `Any`-Lambda aus, das "gleiche Nummer **und** andere Id" prüft? Welchen
+Wert übergibt man bei einem neuen Gerät, das noch keine Id hat?
 
 ### Schritt 6: Selbstkontrolle
 
+Voraussetzung: Schritte 1 bis 4 sind erledigt.
+
 Bevor der CSV-Import steht, ist die Datenbank leer. Zum Prüfen reicht ein vorübergehender Test im
-Startcode, etwa in `App.xaml.cs`, der ein Gerät speichert, wieder lädt und das Ergebnis mit
-`System.Diagnostics.Debug.WriteLine` ins Ausgabefenster schreibt.
+Startcode, etwa in `App.xaml.cs`, der eine Kategorie und ein Gerät speichert, wieder lädt und das
+Ergebnis mit `System.Diagnostics.Debug.WriteLine` ins Ausgabefenster schreibt. Dafür braucht es die
+öffentlichen Konstruktoren aus Schritt 2a.
 
 Prüffragen, die dieser Test beantworten sollte:
 
-- Hat das Gerät nach `SaveItem` eine Id größer 0?
+- Hat das Gerät nach dem Speichern eine Id größer 0?
 - Liefert `GetItemById` mit dieser Id das Gerät zurück, und ist `Category` dabei gefüllt?
+- Was passiert bei `GetItemById` mit einer Id, die es nicht gibt? Ist das Verhalten das, was du in
+  1.6 entschieden hast?
 - Meldet `CheckInventoryNumberDuplicate` für dieselbe Nummer mit einer **anderen** Id `true` und mit
   **seiner eigenen** Id `false`?
 
-Wenn alle drei stimmen, sind Kontext, Mapping und Repository korrekt. Den Testcode danach wieder
+Wenn alle vier stimmen, sind Kontext, Mapping und Repository korrekt. Den Testcode danach wieder
 entfernen.
 
 ### Schritt 7: Übertragen auf LendItemRepository
@@ -278,7 +404,7 @@ Hier kommen die Konzepte zusammen. Zwei Methoden als Übung:
 
 **Offene Ausleihe zu einem Gerät** — Diese Methode fehlt noch im Interface, R1 hängt an ihr.
 Leitfragen: Welche zwei Bedingungen machen eine Ausleihe zu "offen für Gerät X"? Welche LINQ-Methode
-aus 1.2 passt, wenn es höchstens eine geben darf?
+aus 1.2 passt, wenn es höchstens eine geben darf, und keine auch ein normaler Fall ist?
 
 **GetAllOverdueLendItems** — Leitfragen: Warum darfst du hier nicht `Where(l => l.IsOverdue)`
 schreiben (siehe 1.3)? Aus welchen zwei echten Spalten setzt sich "überfällig" zusammen? Welche
@@ -291,9 +417,10 @@ Navigationseigenschaften braucht die Überfälligkeitsliste nach A6 zum Anzeigen
 
 | Meldung | Bedeutung |
 |---|---|
-| `The expression '...' is invalid inside an 'Include' operation` | `Include` auf eine normale Spalte statt auf eine Navigationseigenschaft |
-| `could not be translated` | Bedingung nutzt eine berechnete C#-Property, die es in der Datenbank nicht gibt |
 | `No database provider has been configured` | `OnConfiguring` ruft kein `UseSqlite` auf |
 | `SQLite Error 1: 'no such table'` | Migration nicht ausgeführt oder falscher Dateipfad |
-| `NullReferenceException` auf `item.Category.Name` | `Include(i => i.Category)` fehlt |
-| `The instance of entity type cannot be tracked because another instance with the same key` | zwei Kontexte oder dasselbe Objekt zweimal geladen, siehe Schritt 4 |
+| `Sequence contains no matching element` | `First` hat keinen Treffer gefunden, siehe 1.2 und 1.6 |
+| `The expression '...' is invalid inside an 'Include' operation` | `Include` auf eine normale Spalte statt auf eine Navigationseigenschaft |
+| `could not be translated` | Bedingung nutzt eine berechnete C#-Property, die es in der Datenbank nicht gibt |
+| `NullReferenceException` auf `item.Category.Name` | `Include(i => i.Category)` fehlt bei dieser Abfrage |
+| `The instance of entity type cannot be tracked because another instance with the same key` | zwei Kontexte oder dasselbe Objekt zweimal angemeldet, siehe Schritt 4 |

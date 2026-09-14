@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Digitale_Geraeteliste.Core.Model;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Digitale_Geraeteliste.Core.Model;
 
 namespace Digitale_Geraeteliste.Data.Repositories
 {
@@ -13,7 +14,13 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<LendItem> LendItems => Set<LendItem>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options) { }
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            if (!options.IsConfigured)
+            {
+                options.UseSqlite("Server=(localdb)\\mssqllocaldb;Database=Digitale_Geraeteliste;Trusted_Connection=True;");
+            }
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder) { }
 
         public LendContext()
