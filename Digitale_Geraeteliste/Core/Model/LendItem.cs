@@ -10,11 +10,11 @@ namespace Digitale_Geraeteliste.Core.Model
         public DateTime LendDate { get; set; }
         public DateTime ExpectedReturnDate { get; set; }
         public DateTime? ActualReturnDate { get; set; }
-        public Employee BorrowedBy { get; set; }
+        public required Employee BorrowedBy { get; set; }
         public int BorrowedById { get; set; } // FK
-        public Item Item { get; set; }
+        public required Item Item { get; set; }
         public int ItemId { get; set; } // FK
-        public Employee LendBy { get; set; }
+        public required Employee LendBy { get; set; }
         public int LendById { get; set; } // FK
         public bool IsActive { get; set; } = true;
         public bool IsOverdue => IsOverdueAt(DateTime.Now.Date);
