@@ -8,6 +8,11 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     internal class LendItemRepository : ILendItemRepository
     {
+        private readonly LendContext Context;
+        public LendItemRepository(LendContext context)
+        {
+            Context = context;
+        }
         public void ChangeLendItem(LendItem lendItem, int itemId, int employeeId, DateTime lendDate, DateTime returnDate)
         {
             throw new NotImplementedException();

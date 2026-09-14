@@ -10,10 +10,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     internal class ItemRepository : IItemRepository
     {
-        private LendContext Context;
-        public ItemRepository() 
+        private readonly LendContext Context;
+        public ItemRepository(LendContext context)
         {
-            Context = new LendContext();
+            Context = context;
         }
         public Item GetItemById(int id)
         {

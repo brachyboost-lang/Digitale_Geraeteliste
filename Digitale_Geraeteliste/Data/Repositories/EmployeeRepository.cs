@@ -8,6 +8,11 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     internal class EmployeeRepository : IEmployeeRepository
     {
+        private readonly LendContext Context;
+        public EmployeeRepository(LendContext context)
+        {
+            Context = context;
+        }
         public Employee ChangeEmployee(Employee employee, string firstName, string lastName, string email, string phoneNumber, string department)
         {
             throw new NotImplementedException();

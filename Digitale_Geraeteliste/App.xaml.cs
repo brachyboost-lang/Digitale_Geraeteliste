@@ -9,6 +9,7 @@ namespace Digitale_Geraeteliste
     /// </summary>
     public partial class App : Application
     {
+
     }
 
 }
