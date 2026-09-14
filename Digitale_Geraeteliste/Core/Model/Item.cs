@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Xml;
 
 namespace Digitale_Geraeteliste.Core.Model
 {
@@ -18,6 +19,17 @@ namespace Digitale_Geraeteliste.Core.Model
         public bool IsInUse { get; set; }
         public bool IsRetired { get; set; }
         public bool NeedsMaintenance { get; set; }
+        public Item(string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isInUse, bool isRetired, bool needsMaintenance)
+        {
+            InventoryNumber = inventoryNumber;
+            Name = name;
+            Category = category;
+            Description = description;
+            StandardLendDuration = standardLendDuration;
+            IsInUse = isInUse;
+            IsRetired = isRetired;
+            NeedsMaintenance = needsMaintenance;
+        }
 
         private Item() { }
     }

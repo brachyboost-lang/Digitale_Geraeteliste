@@ -8,7 +8,10 @@ namespace Digitale_Geraeteliste.Core.Model
     {
         public int Id { get; set; } // PK
         public string Name { get; set; } = string.Empty;
-
+        public Category(string name)
+        {
+            Name = name;
+        }
         private Category() { }
     }
 }
