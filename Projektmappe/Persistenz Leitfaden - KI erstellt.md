@@ -47,10 +47,14 @@ Digitale_Geraeteliste/
     Model/          Entitäten, kennen keine Datenbank
     Interfaces/     IItemRepository, IEmployeeRepository, ILendItemRepository
   Data/
-    AusleihContext.cs       EF Core
+    LendContext.cs          EF Core
     Repositories/           Implementierungen der Interfaces
     CsvImporter.cs          Erstbefüllung
 ```
+
+Im Projekt liegen `LendContext.cs` und `CSVImporter.cs` derzeit ebenfalls unter
+`Data/Repositories/`. Das funktioniert, beide sind aber keine Repositories. Für die Dokumentation
+ist die Struktur eindeutiger, wenn sie eine Ebene höher liegen.
 
 `Core` darf `Data` nicht kennen. `Data` kennt `Core`. Diese Richtung ist die ganze Regel.
 
@@ -71,11 +75,13 @@ Kommandozeilenwerkzeug `dotnet ef` selbst, es wird einmalig global installiert.
 ## 4. Der DbContext
 
 Ein `DbContext` ist zweierlei: die Verbindung zur Datenbank und ein Gedächtnis. Er merkt sich
-jedes geladene Objekt und erkennt beim Speichern selbst, was sich geändert hat. Deshalb gibt es
-kein `Update`, sondern nur ein `SaveChanges`.
+jedes geladene Objekt und erkennt beim Speichern selbst, was sich geändert hat. Deshalb braucht es
+für geladene Objekte kein `Update`, sondern nur ein `SaveChanges`. `Update` gibt es trotzdem, es ist
+für Objekte gedacht, die der Kontext nicht selbst geladen hat. Details stehen in Abschnitt 1.5 von
+[EF Core und LINQ Schritt fuer Schritt - KI erstellt.md](EF%20Core%20und%20LINQ%20Schritt%20fuer%20Schritt%20-%20KI%20erstellt.md).
 
 ```csharp
-public class AusleihContext : DbContext
+public class LendContext : DbContext
 {
     public DbSet<Item> Items => Set<Item>();
     public DbSet<Category> Categories => Set<Category>();
@@ -95,6 +101,10 @@ zuverlässig beschreibbar. Der übliche Ort ist das Anwendungsdatenverzeichnis d
 ermittelt über `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)`. Für
 die Entwicklung reicht auch `AppContext.BaseDirectory`, also der Ausgabeordner neben der EXE.
 Die Entscheidung gehört in die Dokumentation, weil sie die Installierbarkeit betrifft.
+
+Im Projekt umgesetzt ist `AppContext.BaseDirectory` mit der Datei `Digitale_Geraeteliste.db`. Für
+den Einzelplatzbetrieb am Lagerplatz-PC ist das vertretbar, solange die Anwendung nicht in einem
+schreibgeschützten Ordner wie `C:\Programme` installiert wird.
 
 ## 5. Beziehungen konfigurieren
 
@@ -119,9 +129,17 @@ Das hat drei Vorteile: EF erkennt die Zuordnung ohne weitere Konfiguration, der 
 die Ids direkt setzen ohne die zugehörigen Objekte zu laden, und in der Bestandsübersicht lässt
 sich nach `ItemId` filtern, ohne das ganze Gerät nachzuladen.
 
-`Item.Category` ist als `Category?` deklariert und damit eine optionale Beziehung. Das ist eine
-bewusste Aussage: Ein Gerät darf ohne Kategorie existieren. Falls das nicht gewollt ist, sollte
-die Property nicht nullable sein und eine `CategoryId` bekommen.
+Ob eine Beziehung Pflicht ist, entscheidet bei EF die **Fremdschlüssel-Property**, nicht die
+Navigationseigenschaft. `Item.CategoryId` ist ein `int` und kein `int?`, deshalb legt EF die Spalte
+als `NOT NULL` an: Jedes Gerät muss eine Kategorie haben. Das Fragezeichen an `Category?` sagt nur,
+dass das Objekt ohne `Include` nicht geladen sein muss.
+
+Für Pflichtbeziehungen setzt EF standardmäßig **Löschweitergabe** (`ON DELETE CASCADE`). Wird ein
+Mitarbeiter gelöscht, löscht die Datenbank alle seine Ausleihen mit, ein gelöschtes Gerät nimmt
+seine Ausleihhistorie mit. Für eine Anwendung, deren Zweck die Nachvollziehbarkeit von Ausleihen
+ist, sollte das bewusst entschieden werden: entweder festlegen, dass Geräte und Mitarbeiter nie
+gelöscht, sondern nur ausgemustert bzw. deaktiviert werden, oder das Verhalten in `OnModelCreating`
+mit `OnDelete(DeleteBehavior.Restrict)` ändern.
 
 ## 6. Migration erzeugen
 
@@ -141,12 +159,23 @@ sich in der Tabelle `__EFMigrationsHistory`, welche Migrationen bereits gelaufen
 **Wichtig:** Nach jeder Änderung am Modell braucht es eine neue Migration. Wird das vergessen,
 läuft die Anwendung gegen ein veraltetes Schema und meldet fehlende Spalten.
 
+**Ebenso wichtig:** Migrationsdateien nie einzeln löschen. EF vergleicht bei jeder neuen Migration
+das Modell mit der Datei `LendContextModelSnapshot.cs`, nicht mit der Datenbank. Wird eine Migration
+gelöscht, der Snapshot aber behalten, enthält die nächste Migration die Änderungen nicht mehr und
+bleibt leer. Solange die Datenbank keine echten Daten enthält, ist ein vollständiger Neuanfang der
+saubere Weg: Ordner `Migrations` samt Snapshot und die `.db`-Datei löschen, dann beide Befehle neu
+ausführen. Die genaue Erklärung steht in Abschnitt 1.8 der EF-Core-Anleitung.
+
 ## 7. Vor dem Weiterbauen: nachsehen
 
 An dieser Stelle nicht direkt weiterprogrammieren, sondern die erzeugte `.db`-Datei öffnen, zum
 Beispiel mit *DB Browser for SQLite*. Wenn vier Tabellen mit den erwarteten Spalten zu sehen
-sind, stimmt das Mapping. Wenn Spalten fehlen, liegt es fast immer an den
-Zugriffsmodifikatoren aus Abschnitt 0.
+sind, stimmt das Mapping. Wenn Spalten fehlen, liegt es fast immer daran, dass die Properties nicht
+`public` sind oder das Modell nach der letzten Migration geändert wurde.
+
+Zusätzlich die `Up`-Methode der Migration öffnen. Sie muss für jede Tabelle einen `CreateTable`-Aufruf
+enthalten. Ist sie leer, obwohl die Datenbank Tabellen hat, stammen die Tabellen aus einer früheren,
+inzwischen gelöschten Migration, siehe Abschnitt 6.
 
 Dieser Zwischenschritt spart erfahrungsgemäß die meiste Zeit, weil ein falsches Mapping sonst
 erst drei Schichten später auffällt.
@@ -166,6 +195,15 @@ stehen im Format `yyyy-MM-dd` und sollten mit `DateTime.ParseExact` und
 `CultureInfo.InvariantCulture` gelesen werden, sonst hängt das Ergebnis von den Regionaleinstellungen
 des Rechners ab. Und `ActualReturnDate` ist bei offenen Ausleihen leer, ein leeres Feld muss also zu
 `null` werden und nicht zu einem Fehler.
+
+Die Spaltenreihenfolge steht in der Kopfzeile jeder Datei, und in allen vier Dateien ist Index 0 die
+`Id`. Die Indizes beim Zugriff auf das Array aus `Split(';')` sollten gegen diese Kopfzeile geprüft
+werden, sonst landen Werte verschoben in den falschen Properties.
+
+Eine Entscheidung gehört in die Dokumentation: Werden die Ids aus den CSV-Dateien übernommen, oder
+vergibt SQLite neue? `geraete.csv` verweist über `CategoryId` auf Kategorien, `ausleihen.csv` über
+`ItemId`, `BorrowedById` und `LendById` auf Geräte und Mitarbeiter. Vergibt die Datenbank beim Import
+neue Ids, zeigen diese Verweise ins Leere oder auf falsche Datensätze.
 
 ## 9. Repositories
 
@@ -191,6 +229,12 @@ public interface ILendItemRepository
 `GetOpenLend` ist die Methode, an der R1 hängt: Liefert sie einen Treffer, ist das Gerät verliehen
 und darf nicht erneut ausgegeben werden. `GetAllOpen` ist die Grundlage für A6.
 
+Die Signaturen oben sind ein früher Vorschlag. Im Projekt heißen die Methoden inzwischen anders, etwa
+`GetAllItems`, `GetItemById` und `CheckInventoryNumberDuplicate`, und die Inventarnummer ist ein
+`string` statt eines `int`. Maßgeblich sind die Interfaces unter `Core/Interfaces/`. Unverändert gilt:
+Die Duplikatprüfung braucht die Id des gerade bearbeiteten Geräts als zweiten Parameter, und
+`GetOpenLend` fehlt dort noch.
+
 Eine Falle bei EF Core: Verknüpfte Objekte werden standardmäßig **nicht** mitgeladen. Eine Ausleihe
 kommt ohne ihr `Item` und ohne ihren `Employee` zurück, beide sind `null`. Wer sie braucht, muss sie
 mit `.Include(l => l.Item)` anfordern. In der Überfälligkeitsliste stehen Gerätename und
@@ -214,6 +258,8 @@ Stimmen diese Zahlen, ist Phase 2 abgeschlossen.
 | Fehler über mehrdeutige Beziehungen zu `Employee` | die zwei Verweise aus Abschnitt 5 sind nicht konfiguriert |
 | Verknüpfte Objekte sind `null` | `Include` fehlt |
 | `SQLite Error: no such column` | Modell geändert, aber keine neue Migration erzeugt |
+| Neue Migration hat eine leere `Up`-Methode | Migrationsdatei gelöscht, Snapshot behalten, siehe Abschnitt 6 |
+| `FOREIGN KEY constraint failed` beim Import | Verweis auf eine Id, die in der Datenbank nicht existiert, siehe Abschnitt 8 |
 | Datumswerte verschoben oder Parse-Fehler | ohne `InvariantCulture` gelesen |
 
 ## Zeitrahmen

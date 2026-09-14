@@ -1,31 +1,33 @@
 # EF Core und LINQ Schritt für Schritt
 
-Arbeitsanleitung für den Weg vom leeren `LendContext` bis zu einem funktionierenden
-`ItemRepository`. Sie ergänzt den [Persistenz Leitfaden - KI erstellt.md](Persistenz%20Leitfaden%20-%20KI%20erstellt.md)
-um die Syntax, die dort vorausgesetzt wird. Jeder Abschnitt erklärt ein Konzept, zeigt es an einem
-Beispiel mit einer **anderen** Entität als der, die umgesetzt werden soll, und endet mit einer
-Aufgabe und Leitfragen. Lösungen stehen hier bewusst nicht.
+Arbeitsanleitung für den Weg vom `LendContext` bis zu funktionierenden Repositories. Sie ergänzt den
+[Persistenz Leitfaden - KI erstellt.md](Persistenz%20Leitfaden%20-%20KI%20erstellt.md) um die Syntax,
+die dort vorausgesetzt wird. Jeder Abschnitt erklärt ein Konzept, zeigt es an einem Beispiel mit einer
+**anderen** Entität als der, die umgesetzt werden soll, und endet mit einer Aufgabe und Leitfragen.
+Lösungen stehen hier bewusst nicht.
 
 ## Aktueller Stand
 
 | Baustein | Stand |
 |---|---|
 | `LendContext` mit vier `DbSet`s | erledigt |
-| `OnConfiguring` mit `UseSqlite` | **offen**, Schritt 1 |
-| Öffentliche Konstruktoren für `Item` und `Category` | **offen**, Schritt 2a |
+| `OnConfiguring` mit `UseSqlite` und `Path.Combine` | erledigt |
+| Kontext wird an die Repositories übergeben (`private readonly _context`) | erledigt |
+| Kontext und Repositories werden in `App.OnStartup` erzeugt | erledigt, Hinweise in Schritt 4 |
+| Öffentliche Konstruktoren für `Item` und `Category` | erledigt, **aber** Konflikt mit `required`, Schritt 2a |
+| Datenbankschema in `Digitale_Geraeteliste.db` | korrekt angelegt |
+| Migrationsdateien | **fehlerhaft**, `Up` ist leer und `Email` fehlt, Schritt 3 |
 | Entscheidung `IsInUse` / `IsActive` | **offen**, Schritt 2b |
-| Erste Migration und Sichtprüfung der Datenbank | **offen**, Schritt 3 |
-| Kontext wird ins Repository übergeben | **offen**, Schritt 4 |
 | `GetAllItems` mit `Include(i => i.Category)` | erledigt |
 | `GetItemById` | umgesetzt, Überarbeitung empfohlen, Schritt 5 |
-| `UpdateItem` mit `Update` und `SaveChanges` | umgesetzt, Hinweise in 1.5 und Schritt 5 |
+| `UpdateItem` | umgesetzt, Hinweise in 1.5 |
 | `ChangeItem` | umgesetzt, Entscheidung offen, Schritt 5 |
 | `CheckInventoryNumberDuplicate` | **offen**, Schritt 5 |
+| `CSVImporter.GetEmployeesFromCSV` | umgesetzt, **Spalten verschoben**, Schritt 5b |
 
-**Wichtig zur Reihenfolge:** Das Repository ist schon weiter als die Schritte 1 bis 3. Solange
-`OnConfiguring` leer ist und keine Migration existiert, kann keine Methode im Repository tatsächlich
-ausgeführt werden. Jeder Aufruf endet mit `No database provider has been configured`. Die Methoden
-lassen sich also erst prüfen, wenn Schritt 1 bis 3 erledigt sind.
+**Die zwei dringendsten Punkte** sind Schritt 3 (Migrationen reparieren) und Schritt 2a (`required`
+gegen Konstruktor). Beide fallen im Moment nicht auf, weil die Datenbank leer ist und noch niemand
+`new Item(...)` aufruft. Beide schlagen zu, sobald der Import läuft.
 
 ---
 
@@ -114,7 +116,7 @@ Bedingung deshalb aus echten Spalten zusammengesetzt werden.
 `context.Items.Any(...)` dasselbe Ergebnis liefern, sich aber bei 100.000 Geräten sehr
 unterschiedlich verhalten.
 
-**Aufgabe:** Wie sieht `GetItemById` aus, wenn die Abfrage direkt auf `Context.Items` läuft? Welche
+**Aufgabe:** Wie sieht `GetItemById` aus, wenn die Abfrage direkt auf `_context.Items` läuft? Welche
 Zeile deiner jetzigen Methode fällt dann weg?
 
 ### 1.4 Include: verknüpfte Objekte mitladen
@@ -130,9 +132,9 @@ context.LendItems.Include(l => l.BorrowedBy).ToList();
 Entität ist. Für normale Spalten wie `string` oder `int` ist es nicht nötig und nicht erlaubt,
 die werden immer geladen.
 
-**Erledigt:** `GetAllItems` verwendet jetzt `Include(i => i.Category)`.
+**Erledigt:** `GetAllItems` verwendet `Include(i => i.Category)`.
 
-**Aufgabe zum Weiterdenken:** Wenn `GetItemById` direkt auf `Context.Items` abfragt statt über
+**Aufgabe zum Weiterdenken:** Wenn `GetItemById` direkt auf `_context.Items` abfragt statt über
 `GetAllItems`, fehlt das `Include` dort. Brauchst du die Kategorie beim Laden eines einzelnen Geräts?
 Denk an den Bearbeiten-Dialog aus A1, der die Kategorie anzeigt.
 
@@ -158,7 +160,8 @@ context.SaveChanges();
 ```
 
 Beim `Add` darf die `Id` 0 sein. SQLite vergibt sie, und nach `SaveChanges` steht der vergebene Wert
-im Objekt.
+im Objekt. Deshalb ist die Zeile `Id = 0;` in den `Employee`-Konstruktoren nicht falsch, aber
+überflüssig: `0` ist ohnehin der Startwert jedes `int`.
 
 **`Update` ist für Objekte gedacht, die der Kontext nicht kennt.** Etwa ein Objekt, das aus einem
 anderen Kontext stammt oder im Code neu zusammengebaut wurde. `Update` meldet es an und markiert
@@ -178,9 +181,6 @@ welchen Fall deckt `Update` ab, den `SaveChanges` allein nicht abdeckt?
 was sie tut? Überlege, ob `SaveItem` den Aufrufer weniger überrascht.
 
 ### 1.6 Exceptions: wann werfen, wann nicht
-
-Diesen Abschnitt gab es in der ersten Fassung nicht. Er ist durch `GetItemById` und `ChangeItem`
-dazugekommen.
 
 Eine Exception ist für Situationen gedacht, mit denen der Code an dieser Stelle nicht rechnet und
 die er nicht selbst lösen kann. "Datenbankdatei ist gesperrt" ist so ein Fall. "Zu dieser Id gibt
@@ -205,8 +205,8 @@ Das Repository weiß aber nicht, wer oder was es aufruft, vielleicht ein Unit-Te
 CSV-Import. Benutzertexte gehören in die Schicht, die mit dem Benutzer spricht, also später ins
 ViewModel.
 
-Die gute Nachricht: Du hast in beiden Fällen die ursprüngliche Exception als `ex` weitergegeben.
-Dadurch geht die eigentliche Fehlerursache nicht verloren. Das ist der Teil, der richtig ist.
+Richtig ist, dass du in beiden Fällen die ursprüngliche Exception als `ex` weitergibst. Dadurch geht
+die eigentliche Fehlerursache nicht verloren.
 
 Ein Beispiel für die Alternative, an einer Kategorie:
 
@@ -227,130 +227,181 @@ liefert statt zu werfen? Was muss sich dafür am Rückgabetyp im Interface ände
 **Aufgabe:** Gibt es in deinem Repository eine Stelle, an der ein `try`/`catch` wirklich etwas
 Sinnvolles tun könnte, also den Fehler behandelt statt ihn nur umzuverpacken?
 
+### 1.7 `required` und Konstruktoren
+
+Dieser Abschnitt ist neu. Du hast `InventoryNumber`, `BorrowedBy`, `Item` und `LendBy` mit
+`required` markiert. Damit sind die Compiler-Warnungen CS8618 verschwunden, aber das Schlüsselwort
+bedeutet mehr, als es auf den ersten Blick scheint.
+
+`required` heißt: **Wer ein Objekt mit `new` erzeugt, muss diese Property im Objektinitialisierer
+setzen**, also in den geschweiften Klammern nach dem Konstruktoraufruf. Der Compiler prüft das an
+jeder Stelle, an der `new` steht. Und er schaut dabei **nicht** in den Konstruktor hinein. Dass dein
+`Item`-Konstruktor `InventoryNumber` zuweist, weiß er nicht.
+
+Am Beispiel einer Kategorie, angenommen `Name` wäre `required` und der Konstruktor setzt ihn:
+
+```csharp
+var c1 = new Category("Messtechnik");                            // CS9035
+var c2 = new Category("Messtechnik") { Name = "Messtechnik" };   // kompiliert
+```
+
+Die erste Zeile scheitert mit `CS9035: Required member 'Category.Name' must be set in the object
+initializer or attribute constructor`. Die zweite kompiliert, setzt den Namen aber doppelt.
+
+Bei dir fällt das noch nicht auf, weil es im ganzen Projekt noch keinen Aufruf von `new Item(...)`
+oder `new LendItem(...)` gibt. Der erste kommt mit dem CSV-Import.
+
+Es gibt drei Wege aus diesem Widerspruch:
+
+- **`required` wieder entfernen** und die Warnung anders lösen, bei `InventoryNumber` mit einem
+  Startwert wie bei `Name`, bei den Navigationseigenschaften mit `= null!;`. Der Konstruktor bleibt
+  dann die Stelle, die für vollständige Objekte sorgt.
+- **Den Konstruktor mit dem Attribut `[SetsRequiredMembers]` kennzeichnen.** Damit sagst du dem
+  Compiler ausdrücklich: "Dieser Konstruktor setzt alle Pflichtfelder." Das Attribut liegt im
+  Namespace `System.Diagnostics.CodeAnalysis`. Der Compiler prüft allerdings nicht nach, ob das
+  stimmt.
+- **Den Konstruktor entfernen** und nur mit Objektinitialisierern arbeiten. Dann erzwingt `required`
+  die Vollständigkeit, aber fachliche Logik im Konstruktor ist nicht mehr möglich.
+
+**Aufgabe:** Entscheide dich für einen Weg. Leitfragen: Wo soll in deinem Projekt sichergestellt
+werden, dass ein Gerät vollständig ist, beim Konstruktor oder beim Aufrufer? Welcher Weg lässt sich
+in der Dokumentation in zwei Sätzen begründen?
+
+### 1.8 Wie Migrationen funktionieren
+
+Auch dieser Abschnitt ist neu, weil deine Migrationsdateien nicht zum Stand der Datenbank passen.
+
+Eine Migration besteht aus drei Teilen, und jeder hat eine eigene Aufgabe:
+
+| Datei | Aufgabe |
+|---|---|
+| `<Zeitstempel>_<Name>.cs` | Die Anweisungen `Up` und `Down`: was beim Anwenden bzw. Rückgängigmachen passiert |
+| `<Zeitstempel>_<Name>.Designer.cs` | Das Modell, wie es zum Zeitpunkt dieser Migration aussah |
+| `<Kontextname>ModelSnapshot.cs` | Das Modell nach **allen** Migrationen, also EFs Gedächtnis über den aktuellen Stand |
+
+Bei `dotnet ef migrations add` vergleicht EF dein aktuelles C#-Modell mit dem **Snapshot**, nicht
+mit der Datenbank. Die Unterschiede werden zur neuen `Up`-Methode, und der Snapshot wird aktualisiert.
+
+Bei `dotnet ef database update` schaut EF in die Tabelle `__EFMigrationsHistory` der Datenbank,
+welche Migrationen dort schon eingetragen sind, und führt nur die fehlenden aus.
+
+Daraus ergeben sich zwei Regeln:
+
+- **Eine Migrationsdatei nie einfach löschen, wenn der Snapshot bleibt.** Dann hält EF den alten
+  Stand weiterhin für bekannt, und die nächste Migration enthält die Änderungen nicht mehr.
+- **Nach jeder Modelländerung eine neue Migration**, auch bei einer einzelnen neuen Property.
+
+**Aufgabe:** In deiner `__EFMigrationsHistory` stehen zwei Einträge mit dem Namen `InitialCreate`,
+aber im Ordner `Migrations` liegt nur einer, und dessen `Up`-Methode ist leer. Erkläre anhand der
+Tabelle oben, wie das zustande gekommen ist. Was würde passieren, wenn jemand dein Repository klont
+und `dotnet ef database update` auf einem Rechner ohne Datenbankdatei ausführt?
+
 ---
 
 ## Teil 2: Der Weg im Projekt
 
-Die Schritte bauen aufeinander auf. Nach jedem Schritt sollte das Projekt kompilieren.
+### Schritt 1: Den Kontext mit der Datenbank verbinden — erledigt
 
-### Schritt 1: Den Kontext mit der Datenbank verbinden
+`OnConfiguring` baut den Pfad mit `Path.Combine(AppContext.BaseDirectory, ...)` und ruft `UseSqlite`
+auf. Die Datenbank liegt damit im Ausgabeordner neben der EXE.
 
-`OnConfiguring` ist leer. Ohne Anbieter und Pfad weiß EF nicht, wohin es schreiben soll, und die
-Migration bricht ab.
+Die Prüfung `if (!options.IsConfigured)` ist dabei eine gute Wahl. Sie sorgt dafür, dass ein
+Aufrufer dem Kontext von außen andere Optionen mitgeben kann, etwa eine Test-Datenbank, und
+`OnConfiguring` diese dann nicht überschreibt. Das wird in Phase 7 nützlich.
 
-Die Form des Aufrufs ist:
+Das `using Microsoft.Extensions.Options;` in `LendContext.cs` wird nicht verwendet und kann weg.
 
-```csharp
-options.UseSqlite("Data Source=<Pfad zur Datei>");
-```
+### Schritt 2: Das Modell fertig machen
 
-**Aufgabe:** Baue den Pfad so, dass die Datei `geraeteliste.db` im Ausgabeordner der Anwendung
-liegt. Die Bausteine sind `AppContext.BaseDirectory` und `Path.Combine`.
+**2a: Konstruktoren** — `Item` und `Category` haben jetzt öffentliche Konstruktoren. Beim `Item`
+kollidiert der Konstruktor aber mit den `required`-Properties, siehe 1.7. Das gilt genauso für die
+beiden `LendItem`-Konstruktoren. Diese Entscheidung sollte vor der neuen Migration fallen, weil sie
+bestimmt, wie der Import die Objekte erzeugt.
 
-Leitfragen: Warum ist `Path.Combine` besser als zwei Strings mit `+` zu verbinden? Was steht in
-`AppContext.BaseDirectory`, wenn du die Anwendung aus Visual Studio startest?
+Leitfrage zum `Item`-Konstruktor: Er setzt `Category`, aber nicht `CategoryId`. Ist das ein Problem?
+Denk daran, was EF beim `Add` mit einer gesetzten Navigationseigenschaft macht. Und was ist, wenn der
+Import nur die `CategoryId` aus der CSV kennt, aber kein `Category`-Objekt?
 
-Den leeren öffentlichen Konstruktor von `LendContext` kannst du dabei entfernen.
+**2b: IsInUse oder IsActive?** — weiterhin offen. Wenn die Property "darf ausgeliehen werden" meint,
+passt der alte Name `IsActive` besser, und die CSV-Spalte heißt auch so. Wenn sie "ist gerade
+verliehen" meint, ist sie überflüssig, weil das die offene Ausleihe schon aussagt. Die Entscheidung
+betrifft das Datenbankschema und gehört deshalb ebenfalls vor die neue Migration.
 
-### Schritt 2: Das Modell vor der Migration fertig machen
+**2c: Email bei Employee** — neu hinzugekommen, aber nicht im Snapshot und nicht in der Datenbank.
+Außerdem hat `mitarbeiter.csv` keine Email-Spalte. Leitfragen: Braucht eine der Anforderungen A1 bis
+A7 die Email? Wenn nicht, ist sie Umfang, der Zeit kostet. Wenn ja, müssen Testdaten und Migration
+nachgezogen werden.
 
-Eine Migration hält den Stand des Modells fest. Alles, was vorher noch geändert wird, spart später
-eine zweite Migration.
+### Schritt 3: Migrationen neu aufsetzen
 
-**2a: Wer darf Objekte erzeugen?** `Item` und `Category` haben **nur** einen privaten
-Konstruktor. EF kommt damit zurecht, aber sonst niemand: Weder der CSV-Import noch das Anlegen
-eines neuen Geräts nach A1 kann ein `Item` erzeugen. Beide Klassen brauchen zusätzlich einen
-öffentlichen Konstruktor mit den fachlich nötigen Werten, so wie `Employee` ihn schon hat.
+Das **Schema** in der Datenbankdatei ist korrekt. Die Prüfung ergab:
 
-Leitfrage: Welche Werte muss ein Gerät mindestens haben, damit es fachlich sinnvoll ist? Die `Id`
-gehört nicht dazu, warum? Denk an 1.5 und was beim `Add` mit der `Id` passiert.
+- vier Tabellen plus `__EFMigrationsHistory`
+- in `LendItems` die Spalten `ItemId`, `BorrowedById` und `LendById`, jeweils als Fremdschlüssel
+- keine überzählige Spalte wie `EmployeeId`, die zwei Beziehungen zu `Employee` sind also richtig
+  zugeordnet
+- keine Spalte `IsOverdue`
 
-**2b: IsInUse oder IsActive?** Entscheide, was die Property bedeuten soll. Wenn sie "darf
-ausgeliehen werden" meint, passt der alte Name `IsActive` besser, und die CSV-Spalte heißt auch so.
-Wenn sie "ist gerade verliehen" meint, ist sie überflüssig, weil das die offene Ausleihe schon
-aussagt. Die Entscheidung betrifft auch `ChangeItem`, das den Wert als Parameter entgegennimmt.
+Die **Migrationsdateien** passen aber nicht mehr dazu: Die vorhandene `Up`-Methode ist leer, und
+`Email` fehlt im Snapshot. Die Erklärung steht in 1.8.
 
-**2c: Die Warnungen CS8618.** Der Compiler warnt, dass `InventoryNumber`, `Item`, `BorrowedBy` und
-`LendBy` nach dem privaten Konstruktor `null` sein können.
+Da die Datenbank noch keine Daten enthält, ist der einfachste und sauberste Weg ein Neuanfang:
 
-Für `InventoryNumber` ist die Lösung dieselbe wie bei `Name`: ein Startwert.
+1. Die Entscheidungen aus Schritt 2 treffen und im Code umsetzen.
+2. Den Ordner `Migrations` vollständig löschen, **einschließlich** `LendContextModelSnapshot.cs`.
+3. Die Datei `bin/Debug/net10.0-windows/Digitale_Geraeteliste.db` löschen.
+4. `dotnet ef migrations add InitialCreate`
+5. Die neue `Up`-Methode öffnen und prüfen, dass sie **nicht** leer ist, sondern vier
+   `CreateTable`-Aufrufe enthält.
+6. `dotnet ef database update`
 
-Für die drei Navigationseigenschaften ist die übliche Schreibweise bei EF-Entitäten:
+Leitfrage: Warum ist dieser Neuanfang jetzt unproblematisch, wäre es aber nicht mehr, sobald der
+Lagerist echte Ausleihen erfasst hat? Was wäre dann der richtige Weg für eine Modelländerung?
 
-```csharp
-public Employee BorrowedBy { get; set; } = null!;
-```
+**Ein Befund im Schema, den du bewusst entscheiden solltest:** Alle vier Fremdschlüssel stehen auf
+`ON DELETE CASCADE`. Das ist EFs Standard für Pflichtbeziehungen. Die Folge: Wird ein Mitarbeiter
+gelöscht, löscht die Datenbank automatisch **alle** seine Ausleihen mit, und ein gelöschtes Gerät
+nimmt seine gesamte Ausleihhistorie mit. Für die Überfälligkeitsliste und die Nachvollziehbarkeit
+aus der Ausgangssituation ist das genau das Falsche.
 
-Das `null!` sagt dem Compiler: "Ich weiß, dass hier zunächst nichts steht, EF füllt es beim Laden."
-Es ändert nichts am Verhalten, es dokumentiert nur eine Annahme. Die Annahme stimmt allerdings nur,
-wenn mit `Include` geladen wird, siehe 1.4.
+Leitfragen: Soll dein Programm Geräte und Mitarbeiter überhaupt löschen können, oder nur
+deaktivieren bzw. ausmustern? Wenn nie gelöscht wird, reicht es, das in der Doku festzuhalten. Wenn
+doch, lässt sich das Löschverhalten in `OnModelCreating` ändern, das Stichwort ist `OnDelete` mit
+`DeleteBehavior.Restrict`.
 
-### Schritt 3: Migration erzeugen und nachsehen
+Zur Einordnung des `Category?` in `Item`: Die Datenbank hat `CategoryId` als `NOT NULL` angelegt,
+weil die Fremdschlüssel-Property ein `int` ist und kein `int?`. Die Beziehung ist also Pflicht, auch
+wenn die Navigationseigenschaft nullable ist. Das Fragezeichen an `Category` sagt nur, dass das
+Objekt ohne `Include` nicht geladen sein muss.
 
-Im Ordner `Digitale_Geraeteliste`:
+### Schritt 4: Kontext übergeben und zusammensetzen — erledigt
 
-```
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-```
+Alle drei Repositories bekommen den `LendContext` im Konstruktor und speichern ihn in
+`private readonly LendContext _context`. In `App.OnStartup` werden sie mit derselben Kontextinstanz
+erzeugt.
 
-Dann die Datei `bin/Debug/net10.0-windows/geraeteliste.db` mit *DB Browser for SQLite* öffnen.
+Drei Hinweise für `App.xaml.cs`:
 
-**Prüfliste:**
-
-- Vier Tabellen plus `__EFMigrationsHistory`.
-- Die Tabelle `LendItems` hat die Spalten `ItemId`, `BorrowedById` und `LendById`.
-- Es gibt **keine** zusätzliche Spalte wie `EmployeeId` oder `EmployeeId1`. Taucht eine auf, hat EF
-  die zwei Beziehungen zu `Employee` nicht deinen Fremdschlüsseln zugeordnet und eine eigene
-  angelegt.
-- `IsOverdue` taucht **nicht** als Spalte auf. Leitfrage: Warum nicht?
-
-Zusätzlich die erzeugte Datei im Ordner `Migrations` öffnen und die `Up`-Methode lesen. Jede Zeile
-dort entspricht einer Tabelle, Spalte oder Beziehung.
-
-### Schritt 4: Das Repository bekommt den Kontext
-
-`ItemRepository` erzeugt im Konstruktor weiterhin `new LendContext()`. Warum das zu Problemen führt,
-sobald mehrere Repositories zusammenarbeiten, folgt aus 1.5: Jeder Kontext hat sein eigenes
-Gedächtnis. Lädt `ItemRepository` ein Gerät und `LendItemRepository` speichert eine Ausleihe mit
-diesem Gerät über seinen eigenen Kontext, kennt der zweite Kontext das Gerät nicht und versucht es
-womöglich neu anzulegen.
-
-Das Muster am Beispiel eines Kategorie-Repositorys:
-
-```csharp
-private readonly LendContext _context;
-
-public CategoryRepository(LendContext context)
-{
-    _context = context;
-}
-```
-
-`readonly` bedeutet, dass das Feld nur im Konstruktor gesetzt werden kann. Damit ist ausgeschlossen,
-dass eine Methode später versehentlich einen anderen Kontext hineinschreibt. Der Unterstrich im
-Namen ist die übliche Kennzeichnung privater Felder in C#. Dein jetziger Name `Context` sieht aus
-wie eine Property, das macht Code schwerer lesbar.
-
-**Aufgabe:** Baue den Konstruktor von `ItemRepository` entsprechend um. Leitfrage: Wo im Programm
-wird der Kontext dann erzeugt, und wie viele Instanzen davon gibt es?
+- Die Repositories sind **lokale Variablen** in `OnStartup`. Sie existieren nur bis zum Ende der
+  Methode. Für Schritt 6 reicht das, für Phase 4 nicht mehr, weil dann das ViewModel sie braucht.
+  Siehe Abschnitt 6 im MVVM-Leitfaden.
+- Die Variablen heißen `employeeContext`, `itemContext` und `lendItemContext`, sind aber
+  Repositories. Es gibt nur einen Kontext.
+- Der Kontext hält die Datenbankdatei offen und sollte beim Beenden freigegeben werden. Das
+  Gegenstück zu `OnStartup` ist `OnExit`.
 
 ### Schritt 5: ItemRepository Methode für Methode
 
-**GetAllItems** — erledigt. Nichts zu tun.
+**GetAllItems** — erledigt.
 
 **GetItemById** — umgesetzt, drei Überarbeitungen empfohlen:
 
-1. Die Abfrage direkt auf `Context.Items` stellen statt über `GetAllItems`, siehe 1.3.
+1. Die Abfrage direkt auf `_context.Items` stellen statt über `GetAllItems`, siehe 1.3.
 2. Das `Include` aus `GetAllItems` übernehmen, wenn die Kategorie gebraucht wird, siehe 1.4.
 3. Entscheiden, ob "nicht gefunden" eine Exception oder `null` sein soll, siehe 1.6. Wenn `null`:
    `FirstOrDefault`, Rückgabetyp `Item?` im Interface und in der Klasse, `try`/`catch` entfällt.
 
-Leitfrage: Die Compiler-Warnung CS8603 aus der vorigen Fassung ist verschwunden. Warum? Hat sich das
-zugrunde liegende Problem damit gelöst, oder nur verlagert?
-
-**UpdateItem** — umgesetzt und funktionsfähig. Zu prüfen sind nur die Fragen aus 1.5: Name, und ob
-`Update` in allen Aufrufsituationen nötig ist.
+**UpdateItem** — umgesetzt und funktionsfähig. Zu prüfen sind nur die Fragen aus 1.5.
 
 **ChangeItem** — umgesetzt. Hier ist eine Entscheidung offen, die du bewusst treffen und in der Doku
 begründen solltest:
@@ -365,11 +416,9 @@ Unabhängig davon enthält die jetzige Fassung eine Doppelung. Die Methode bekom
 `item` aus demselben Kontext geladen wurde, sind `item` und `itemToChange` dann zwei Objekte oder
 dasselbe? Was folgt daraus für die Signatur der Methode, reicht vielleicht die Id?
 
-Und zum `catch`-Block: siehe 1.6, Benutzertexte gehören nicht ins Repository.
-
 **CheckInventoryNumberDuplicate** — noch offen. Zwei Punkte:
 
-1. Wie bei `GetItemById` direkt auf `Context.Items` abfragen, siehe 1.3.
+1. Wie bei `GetItemById` direkt auf `_context.Items` abfragen, siehe 1.3.
 2. Der fachliche Fehler: Beim Bearbeiten eines Geräts, dessen Nummer unverändert bleibt, findet `Any`
    das Gerät selbst und meldet ein Duplikat. Das Interface braucht einen zweiten Parameter, die Id
    des gerade bearbeiteten Geräts.
@@ -377,14 +426,40 @@ Und zum `catch`-Block: siehe 1.6, Benutzertexte gehören nicht ins Repository.
 Leitfragen: Wie sieht ein `Any`-Lambda aus, das "gleiche Nummer **und** andere Id" prüft? Welchen
 Wert übergibt man bei einem neuen Gerät, das noch keine Id hat?
 
+### Schritt 5b: CSV-Import der Mitarbeiter
+
+`GetEmployeesFromCSV` erzeugt jetzt direkt `Employee`-Objekte, das ist der richtige Ansatz. Die
+Spaltenzuordnung stimmt aber nicht mit der Datei überein.
+
+Die Kopfzeile von `mitarbeiter.csv` lautet:
+
+```
+Id;LastName;FirstName;FullName;Department
+```
+
+Nach `Split(';')` steht also an Index 0 die `Id`. Dein Code liest `values[0]` als Nachname,
+`values[1]` als Vorname, `values[2]` als Abteilung und `values[3]` als Email.
+
+**Aufgabe:** Schreib für die erste Datenzeile `1;Krüger;Thomas;Krüger, Thomas;Elektroinstallation`
+auf, welcher Wert in welcher Property landen würde. Welche Indizes wären die richtigen?
+
+Leitfragen: Soll die `Id` aus der CSV übernommen werden, oder soll SQLite neue Ids vergeben? Denk an
+`ausleihen.csv`, die über `BorrowedById` und `LendById` auf genau diese Ids verweist. Was passiert mit
+diesen Verweisen, wenn die Datenbank beim Import andere Ids vergibt? Und brauchst du die Spalte
+`FullName` aus der Datei, wenn der Konstruktor den Namen ohnehin selbst zusammensetzt?
+
+Zwei kleinere Punkte: `using System.Security.RightsManagement;` wird auch hier nicht gebraucht. Und
+der `StreamReader` liest ohne Angabe eines Zeichensatzes. Bei .NET ist UTF-8 der Standard, das passt
+zu den Testdaten. Wenn du es in der Doku ausdrücklich zeigen willst, nimmt der Konstruktor ein
+`Encoding.UTF8` als zweiten Parameter.
+
 ### Schritt 6: Selbstkontrolle
 
-Voraussetzung: Schritte 1 bis 4 sind erledigt.
+Voraussetzung: Schritt 3 ist neu aufgesetzt und Schritt 2a entschieden.
 
-Bevor der CSV-Import steht, ist die Datenbank leer. Zum Prüfen reicht ein vorübergehender Test im
-Startcode, etwa in `App.xaml.cs`, der eine Kategorie und ein Gerät speichert, wieder lädt und das
-Ergebnis mit `System.Diagnostics.Debug.WriteLine` ins Ausgabefenster schreibt. Dafür braucht es die
-öffentlichen Konstruktoren aus Schritt 2a.
+Zum Prüfen reicht ein vorübergehender Test in `App.OnStartup`, der eine Kategorie und ein Gerät
+speichert, wieder lädt und das Ergebnis mit `System.Diagnostics.Debug.WriteLine` ins Ausgabefenster
+schreibt.
 
 Prüffragen, die dieser Test beantworten sollte:
 
@@ -395,8 +470,8 @@ Prüffragen, die dieser Test beantworten sollte:
 - Meldet `CheckInventoryNumberDuplicate` für dieselbe Nummer mit einer **anderen** Id `true` und mit
   **seiner eigenen** Id `false`?
 
-Wenn alle vier stimmen, sind Kontext, Mapping und Repository korrekt. Den Testcode danach wieder
-entfernen.
+Wenn alle vier stimmen, sind Kontext, Mapping und Repository korrekt. Den Testcode und die
+Testdatensätze danach wieder entfernen.
 
 ### Schritt 7: Übertragen auf LendItemRepository
 
@@ -413,14 +488,18 @@ Navigationseigenschaften braucht die Überfälligkeitsliste nach A6 zum Anzeigen
 
 ---
 
-## Fehlerbilder zur Laufzeit
+## Fehlerbilder
 
 | Meldung | Bedeutung |
 |---|---|
+| `CS9035: Required member ... must be set in the object initializer` | `required`-Property wird nur im Konstruktor gesetzt, siehe 1.7 |
 | `No database provider has been configured` | `OnConfiguring` ruft kein `UseSqlite` auf |
-| `SQLite Error 1: 'no such table'` | Migration nicht ausgeführt oder falscher Dateipfad |
+| `SQLite Error 1: 'no such table'` | Migration nicht ausgeführt, leere `Up`-Methode oder falscher Dateipfad |
+| `SQLite Error 1: 'no such column: e.Email'` | Property im Modell ergänzt, aber keine neue Migration, siehe 1.8 |
+| Neue Migration ist leer, obwohl sich das Modell geändert hat | Snapshot kennt die Änderung schon, oder eine Migrationsdatei wurde ohne Snapshot gelöscht |
 | `Sequence contains no matching element` | `First` hat keinen Treffer gefunden, siehe 1.2 und 1.6 |
 | `The expression '...' is invalid inside an 'Include' operation` | `Include` auf eine normale Spalte statt auf eine Navigationseigenschaft |
 | `could not be translated` | Bedingung nutzt eine berechnete C#-Property, die es in der Datenbank nicht gibt |
 | `NullReferenceException` auf `item.Category.Name` | `Include(i => i.Category)` fehlt bei dieser Abfrage |
-| `The instance of entity type cannot be tracked because another instance with the same key` | zwei Kontexte oder dasselbe Objekt zweimal angemeldet, siehe Schritt 4 |
+| `The instance of entity type cannot be tracked because another instance with the same key` | zwei Kontexte oder dasselbe Objekt zweimal angemeldet |
+| `FOREIGN KEY constraint failed` beim Import | Ausleihe verweist auf eine Geräte- oder Mitarbeiter-Id, die in der Datenbank nicht existiert, siehe 5b |

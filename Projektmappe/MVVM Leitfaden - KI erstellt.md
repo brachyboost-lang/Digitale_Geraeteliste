@@ -148,6 +148,17 @@ erzeugen, Repositories erzeugen, Services erzeugen, ViewModel erzeugen, Fenster 
 DataContext setzen, Fenster anzeigen. Dafür wird in `App.xaml` das `StartupUri` entfernt und
 stattdessen `OnStartup` überschrieben.
 
+Stand im Projekt: `App.OnStartup` erzeugt bereits den `LendContext` und die drei Repositories. Für
+Phase 4 sind dort noch drei Dinge zu ergänzen:
+
+- Die Repositories sind derzeit lokale Variablen und verschwinden am Ende von `OnStartup`. Sobald
+  ViewModel und Fenster in derselben Methode erzeugt werden, reicht das, weil das ViewModel die
+  Repositories im Konstruktor übernimmt und festhält.
+- Der `LendContext` gehört dagegen in ein Feld, denn er muss beim Beenden in `OnExit` mit `Dispose`
+  freigegeben werden. Dafür muss `OnExit` an ihn herankommen.
+- `StartupUri="MainWindow.xaml"` in `App.xaml` entfernen, sonst öffnet WPF ein zweites Fenster ohne
+  ViewModel.
+
 Ein Dependency-Injection-Container ist dafür nicht nötig. Bei vier Repositories und zwei Services
 ist das Zusammensetzen von Hand übersichtlicher und in der Dokumentation leichter zu zeigen.
 
