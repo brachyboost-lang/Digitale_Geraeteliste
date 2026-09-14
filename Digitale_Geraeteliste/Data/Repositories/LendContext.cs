@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Digitale_Geraeteliste.Data.Repositories
@@ -18,7 +19,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             if (!options.IsConfigured)
             {
-                options.UseSqlite("Server=(localdb)\\mssqllocaldb;Database=Digitale_Geraeteliste;Trusted_Connection=True;");
+                var path = Path.Combine(AppContext.BaseDirectory, "Data", "db", "Digitale_Geraeteliste.db");
+                options.UseSqlite($"Data Source={path}");
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder) { }
