@@ -11,7 +11,6 @@ namespace Digitale_Geraeteliste.Core.Model
         public string FirstName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
-        public string? Email { get; set; } = string.Empty;
 
         public Employee(string lastName, string firstName, string department)
         {
@@ -19,15 +18,6 @@ namespace Digitale_Geraeteliste.Core.Model
             LastName = lastName;
             FirstName = firstName;
             Department = department;
-            FullName = CreateFullName(firstName, lastName);
-        }
-        public Employee(string lastName, string firstName, string department, string? email)
-        {
-            Id = 0; // EF will set this automatically
-            LastName = lastName;
-            FirstName = firstName;
-            Department = department;
-            Email = email;
             FullName = CreateFullName(firstName, lastName);
         }
 

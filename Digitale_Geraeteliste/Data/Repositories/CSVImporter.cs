@@ -23,10 +23,9 @@ namespace Digitale_Geraeteliste.Data.Repositories
                     {
                         var values = line.Split(';');
                         var employee = new Employee(
-                            lastName: values[0],
-                            firstName: values[1],
-                            department: values[2],
-                            email: values[3]
+                            lastName: values[1],
+                            firstName: values[2],
+                            department: values[4]
                         );
                         employees.Add(employee);
                     }
