@@ -10,9 +10,9 @@ namespace Digitale_Geraeteliste.Core.Model
     {
         public int Id { get; set; } // PK
 
-        public required string InventoryNumber { get; set; }
+        public string InventoryNumber { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public Category? Category { get; set; } 
+        public Category Category { get; set; } = null!;
         public int CategoryId { get; set; } // FK
         public string Description { get; set; } = string.Empty;
         public int StandardLendDuration { get; set; }

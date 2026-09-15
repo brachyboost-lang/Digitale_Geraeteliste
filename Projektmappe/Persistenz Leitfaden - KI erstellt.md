@@ -141,6 +141,12 @@ ist, sollte das bewusst entschieden werden: entweder festlegen, dass Geräte und
 gelöscht, sondern nur ausgemustert bzw. deaktiviert werden, oder das Verhalten in `OnModelCreating`
 mit `OnDelete(DeleteBehavior.Restrict)` ändern.
 
+Im Projekt umgesetzt: Alle vier Beziehungen stehen in `OnModelCreating` auf `Restrict`, eingeführt mit
+der Migration `RestrictDeleteBehaviour`. Das Löschen eines Mitarbeiters, Geräts oder einer Kategorie,
+auf die noch verwiesen wird, bricht mit `FOREIGN KEY constraint failed` ab, statt Ausleihdaten
+mitzulöschen. Die Anwendung muss diesen Fall beim Löschen abfangen oder gar keine Löschfunktion
+anbieten.
+
 ## 6. Migration erzeugen
 
 ```
