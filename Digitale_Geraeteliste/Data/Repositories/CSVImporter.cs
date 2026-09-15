@@ -27,6 +27,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
                             firstName: values[2],
                             department: values[4]
                         );
+                        employee.Id = int.Parse(values[0]);
                         employees.Add(employee);
                     }
                 }
