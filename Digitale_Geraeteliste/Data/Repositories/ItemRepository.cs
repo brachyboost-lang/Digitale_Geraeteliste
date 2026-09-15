@@ -50,5 +50,11 @@ namespace Digitale_Geraeteliste.Data.Repositories
             var allItems = GetAllItems();
             return allItems.Any(i => i.InventoryNumber == inventoryNumber);
         }
+
+        public void UpdateItem(Item item)
+        {
+            _context.Items.Update(item);
+            _context.SaveChanges();
+        }
     }
 }
