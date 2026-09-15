@@ -14,9 +14,9 @@ namespace Digitale_Geraeteliste
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            EmployeeRepository employeeContext = new EmployeeRepository(lendContext);
-            ItemRepository itemContext = new ItemRepository(lendContext);
-            LendItemRepository lendItemContext = new LendItemRepository(lendContext);
+            EmployeeRepository employeeRepository = new EmployeeRepository(lendContext);
+            ItemRepository itemRepository = new ItemRepository(lendContext);
+            LendItemRepository lendItemRepository = new LendItemRepository(lendContext);
         }
     }
 
