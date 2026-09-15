@@ -15,6 +15,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             _context = context;
         }
+        
         public Item GetItemById(int id)
         {
             Item? itemById = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == id);
@@ -47,6 +48,12 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public bool CheckInventoryNumberDuplicate(string inventoryNumber, int itemId)
         {
             return _context.Items.Any(i => i.InventoryNumber == inventoryNumber && i.Id != itemId);
+        }
+
+        public void Add(Item item)
+        {
+            _context.Items.Add(item);
+            _context.SaveChanges();
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Digitale_Geraeteliste.Core.Interfaces
 {
     public interface IItemRepository
     {
+        void Add(Item item);
         Item GetItemById(int id);
         IEnumerable<Item> GetAllItems();
         void ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isRetired, bool needsMaintenance);
