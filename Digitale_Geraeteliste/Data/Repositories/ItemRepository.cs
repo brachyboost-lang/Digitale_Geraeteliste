@@ -37,7 +37,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
             itemToChange.NeedsMaintenance = needsMaintenance;
             try
             {
-                UpdateItem(itemToChange);
+                _context.Items.Update(itemToChange);
+                _context.SaveChanges();
             }
             catch (Exception ex) // double it and give it to the next person
             {
@@ -48,12 +49,6 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             var allItems = GetAllItems();
             return allItems.Any(i => i.InventoryNumber == inventoryNumber);
-        }
-
-        public void UpdateItem(Item item)
-        {
-            _context.Items.Update(item);
-            _context.SaveChanges();
         }
     }
 }
