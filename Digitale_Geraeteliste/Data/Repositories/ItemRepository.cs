@@ -17,8 +17,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         public Item GetItemById(int id)
         {
-            Item itemById = _context.Items.Include(i => i.Category).First(i => i.Id == id);
-            return itemById;
+            Item? itemById = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == id);
+            return itemById ?? throw new InvalidOperationException("Item not found");
         }
         public IEnumerable<Item> GetAllItems()
         {
@@ -47,14 +47,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         public bool CheckInventoryNumberDuplicate(string inventoryNumber)
         {
-            var allItems = GetAllItems();
-            return allItems.Any(i => i.InventoryNumber == inventoryNumber);
-        }
-
-        public void UpdateItem(Item item)
-        {
-            _context.Items.Update(item);
-            _context.SaveChanges();
+            return _context.Items.Any(i => i.InventoryNumber == inventoryNumber);
         }
     }
 }
