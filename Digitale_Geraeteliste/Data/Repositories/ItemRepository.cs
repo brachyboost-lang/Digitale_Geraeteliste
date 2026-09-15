@@ -17,16 +17,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         public Item GetItemById(int id)
         {
-            try
-            {
-                var allItems = GetAllItems();
-                Item itemById = allItems.First(i => i.Id == id);
-                return itemById;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while retrieving the item by ID. Check for Typo or Item might not exist.", ex);
-            }
+            Item itemById = _context.Items.Include(i => i.Category).First(i => i.Id == id);
+            return itemById;
         }
         public IEnumerable<Item> GetAllItems()
         {
@@ -45,11 +37,11 @@ namespace Digitale_Geraeteliste.Data.Repositories
             itemToChange.NeedsMaintenance = needsMaintenance;
             try
             {
-            UpdateItem(itemToChange);
+                UpdateItem(itemToChange);
             }
             catch (Exception ex) // double it and give it to the next person
             {
-                throw new Exception("An error occurred while updating the Database. Contact your system administrator.", ex); 
+                throw new Exception("An error occurred while updating the Database. Contact your system administrator.", ex);
             }
         }
         public bool CheckInventoryNumberDuplicate(string inventoryNumber)
