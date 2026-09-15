@@ -11,6 +11,6 @@ namespace Digitale_Geraeteliste.Core.Interfaces
         Item GetItemById(int id);
         IEnumerable<Item> GetAllItems();
         void ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isRetired, bool needsMaintenance);
-        bool CheckInventoryNumberDuplicate(string inventoryNumber);
+        bool CheckInventoryNumberDuplicate(string inventoryNumber, string name);
     }
 }
