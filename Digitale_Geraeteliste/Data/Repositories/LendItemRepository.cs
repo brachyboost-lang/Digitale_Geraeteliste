@@ -42,10 +42,5 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             throw new NotImplementedException();
         }
-
-        public void SaveLendItem(LendItem lendItem)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
