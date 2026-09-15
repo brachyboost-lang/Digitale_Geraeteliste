@@ -44,9 +44,9 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 throw new Exception("An error occurred while updating the Database. Contact your system administrator.", ex);
             }
         }
-        public bool CheckInventoryNumberDuplicate(string inventoryNumber)
+        public bool CheckInventoryNumberDuplicate(string inventoryNumber, string name)
         {
-            return _context.Items.Any(i => i.InventoryNumber == inventoryNumber);
+            return _context.Items.Any(i => i.InventoryNumber == inventoryNumber && i.Name != name);
         }
     }
 }
