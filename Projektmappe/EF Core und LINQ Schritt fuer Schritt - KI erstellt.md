@@ -15,19 +15,20 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `IsInUse` entfernt, Status kommt aus der offenen Ausleihe | erledigt |
 | Migrationen `InitialCreate` und `RestrictDeleteBehaviour` | erledigt, Schema geprüft |
 | Löschweitergabe auf `Restrict` für alle vier Fremdschlüssel | erledigt |
-| `Employee.Email` im Modell und in der Datenbank | erledigt, Umgang beim Import offen, Schritt 2c |
-| `required` entfernt, Startwerte bzw. `= null!` | erledigt, keine Migration nötig (`has-pending-model-changes` geprüft) |
+| `Employee.Email` und zweiter Konstruktor entfernt (YAGNI, Schritt 2c) | im Code erledigt, **Migration fehlt** (`has-pending-model-changes` meldet Änderungen) |
+| `required` entfernt, Startwerte bzw. `= null!` | erledigt |
 | Repository-Variablen in `App.xaml.cs` umbenannt | erledigt |
 | `GetAllItems` mit `Include(i => i.Category)` | erledigt |
-| `GetItemById` fragt direkt die Datenbank ab, mit `Include` | erledigt, offen nur noch `First` gegen `FirstOrDefault` (1.6) |
-| `UpdateItem` aus der Klasse entfernt | **Build rot**, steht noch im Interface, und es fehlt jetzt ein Weg zum Anlegen neuer Geräte, Schritt 5 |
-| `ChangeItem` | umgesetzt, `Update` inzwischen direkt in der Methode, Hinweise in 1.5 und Schritt 5 |
-| `CheckInventoryNumberDuplicate` fragt direkt die Datenbank ab | erledigt, offen nur noch das Ausnehmen des bearbeiteten Geräts, Schritt 5 |
-| `CSVImporter.GetEmployeesFromCSV` | umgesetzt, **Spalten verschoben**, Schritt 6 |
+| `GetItemById` mit `FirstOrDefault` und `InvalidOperationException` bei unbekannter Id | erledigt, Entscheidung aus 1.6 getroffen |
+| `ChangeItem` nutzt nur noch `SaveChanges` auf dem geladenen Gerät | erledigt, offen nur der allgemeine `catch`-Block (1.6) |
+| Methode zum **Anlegen** neuer Geräte | **fehlt**, wird für A1 und den Import gebraucht, Schritt 5 |
+| `CheckInventoryNumberDuplicate` fragt direkt die Datenbank ab | umgesetzt, **Vergleich über `Name` greift nicht**, Schritt 5 |
+| `IEmployeeRepository` mit Parametern `email` und `phoneNumber` | **veraltet**, beide Werte gibt es im Modell nicht mehr |
+| `CSVImporter.GetEmployeesFromCSV` | Spaltenindizes korrigiert, Id-Frage offen, Schritt 6b |
 | Import von Kategorien, Geräten und Ausleihen | **offen**, Schritt 6 |
 
-**Nächster Arbeitsschritt:** Den Build reparieren und dabei entscheiden, wie neue Geräte gespeichert
-werden (Schritt 5). Danach Schritt 2c, dann den Mitarbeiter-Import in Schritt 6.
+**Nächster Arbeitsschritt:** Migration für das entfernte `Email` erzeugen, dann die Duplikatprüfung
+korrigieren und eine Methode zum Anlegen von Geräten ergänzen (Schritt 5), danach Schritt 6.
 
 ---
 
