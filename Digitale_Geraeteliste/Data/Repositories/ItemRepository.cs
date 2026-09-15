@@ -37,7 +37,6 @@ namespace Digitale_Geraeteliste.Data.Repositories
             itemToChange.NeedsMaintenance = needsMaintenance;
             try
             {
-                _context.Items.Update(itemToChange);
                 _context.SaveChanges();
             }
             catch (Exception ex) // double it and give it to the next person
