@@ -18,30 +18,24 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             int changes = 0;
             Employee employeeToChange = _context.Employees.Find(employee.Id) ?? throw new InvalidOperationException("Employee not found");
-            if (employeeToChange != null)
-            {
-                employeeToChange.FirstName = firstName;
-                employeeToChange.LastName = lastName;
-                employeeToChange.CreateFullName(firstName, lastName);
-                employeeToChange.Department = department;
-                changes = _context.SaveChanges();
-            }
+            employeeToChange.FirstName = firstName;
+            employeeToChange.LastName = lastName;
+            employeeToChange.FullName = employeeToChange.CreateFullName(firstName, lastName);
+            employeeToChange.Department = department;
+            changes = _context.SaveChanges();
             return changes > 0;
         }
 
-        public Employee CreateNewEmployee(string firstName, string lastName, string department)
+        public void CreateNewEmployee(string firstName, string lastName, string department)
         {
-            throw new NotImplementedException();
+            var employee = new Employee(firstName, lastName, department);
+            _context.Employees.Add(employee);
+            _context.SaveChanges();
         }
 
         public Employee GetEmployeeByID(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Employee SaveEmployee(Employee employee)
-        {
-            throw new NotImplementedException();
+            return _context.Employees.Find(id) ?? throw new InvalidOperationException("Employee not found");
         }
     }
 }

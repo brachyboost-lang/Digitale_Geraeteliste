@@ -7,9 +7,8 @@ namespace Digitale_Geraeteliste.Core.Interfaces
 {
     public interface IEmployeeRepository
     {
-        Employee CreateNewEmployee(string firstName, string lastName, string department);
+        void CreateNewEmployee(string firstName, string lastName, string department);
         bool ChangeEmployee(Employee employee, string firstName, string lastName, string department);
-        Employee SaveEmployee(Employee employee);
         Employee GetEmployeeByID(int id);
     }
 }
