@@ -3,6 +3,7 @@ using System;
 using Digitale_Geraeteliste.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Digitale_Geraeteliste.Migrations
 {
     [DbContext(typeof(LendContext))]
-    partial class LendContextModelSnapshot : ModelSnapshot
+    [Migration("20260915011101_RemoveEmployeeEmail")]
+    partial class RemoveEmployeeEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
