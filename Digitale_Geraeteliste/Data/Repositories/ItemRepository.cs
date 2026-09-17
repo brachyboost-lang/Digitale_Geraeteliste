@@ -20,7 +20,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public Item GetItemById(int id)
         {
             Item? itemById = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == id);
-            return itemById ?? null!;
+            return itemById!;
         }
         public IEnumerable<Item> GetAllItems()
         {
