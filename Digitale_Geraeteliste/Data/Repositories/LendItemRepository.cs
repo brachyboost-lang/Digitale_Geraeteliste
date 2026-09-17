@@ -10,7 +10,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
     internal class LendItemRepository : ILendItemRepository
     {
         private readonly LendContext _context;
-        private readonly string _logPath = $"{Path.Combine(AppContext.BaseDirectory, "Logs", $"log{DateTime.Now:yyyyMMdd}.txt")}";
+        private readonly string _logPath = $"{Path.Combine(AppContext.BaseDirectory, "Logs")}";
         public LendItemRepository(LendContext context)
         {
             _context = context;
@@ -59,7 +59,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             };
             toLog.AddRange(newValues);
             IEnumerable<string> logStrings = toLog;
-            File.AppendAllLines(_logPath, logStrings);
+            File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logStrings);
             _context.SaveChanges();
         }
 
@@ -116,7 +116,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             if (_context.Categories.Any() || _context.Items.Any() || _context.Employees.Any() || _context.LendItems.Any())
             {
                 string logstring = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Database already contains data. Skipping CSV import.";
-                File.AppendAllLines(_logPath, new[] { logstring });
+                File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), new[] { logstring });
                 return false;
             }
             var employeePath = Path.Combine(AppContext.BaseDirectory, "Data", "Testdata", "mitarbeiter.csv");
@@ -152,7 +152,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             catch (Exception ex)
             {
                 string logstring = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Error importing CSV data: {ex.Message}";
-                File.AppendAllLines(_logPath, new[] { logstring });
+                File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), new[] { logstring });
                 return false;
             }
         }
