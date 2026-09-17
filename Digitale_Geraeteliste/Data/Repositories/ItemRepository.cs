@@ -19,7 +19,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public Item GetItemById(int id)
         {
             Item? itemById = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == id);
-            return itemById ?? throw new InvalidOperationException("Item not found");
+            return itemById ?? null!;
         }
         public IEnumerable<Item> GetAllItems()
         {

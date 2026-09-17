@@ -15,20 +15,22 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `IsInUse` entfernt, Status kommt aus der offenen Ausleihe | erledigt |
 | Migrationen `InitialCreate` und `RestrictDeleteBehaviour` | erledigt, Schema geprüft |
 | Löschweitergabe auf `Restrict` für alle vier Fremdschlüssel | erledigt |
-| `Employee.Email` und zweiter Konstruktor entfernt (YAGNI, Schritt 2c) | im Code erledigt, **Migration fehlt** (`has-pending-model-changes` meldet Änderungen) |
+| `Employee.Email` und zweiter Konstruktor entfernt (YAGNI, Schritt 2c) | erledigt, Migration `RemoveEmployeeEmail` angewendet |
 | `required` entfernt, Startwerte bzw. `= null!` | erledigt |
 | Repository-Variablen in `App.xaml.cs` umbenannt | erledigt |
-| `GetAllItems` mit `Include(i => i.Category)` | erledigt |
-| `GetItemById` mit `FirstOrDefault` und `InvalidOperationException` bei unbekannter Id | erledigt, Entscheidung aus 1.6 getroffen |
-| `ChangeItem` nutzt nur noch `SaveChanges` auf dem geladenen Gerät | erledigt, offen nur der allgemeine `catch`-Block (1.6) |
-| Methode zum **Anlegen** neuer Geräte | **fehlt**, wird für A1 und den Import gebraucht, Schritt 5 |
-| `CheckInventoryNumberDuplicate` fragt direkt die Datenbank ab | umgesetzt, **Vergleich über `Name` greift nicht**, Schritt 5 |
-| `IEmployeeRepository` mit Parametern `email` und `phoneNumber` | **veraltet**, beide Werte gibt es im Modell nicht mehr |
-| `CSVImporter.GetEmployeesFromCSV` | Spaltenindizes korrigiert, Id-Frage offen, Schritt 6b |
+| `ItemRepository`: `GetAllItems`, `GetItemById`, `Add`, `ChangeItem` | erledigt, offen nur der allgemeine `catch`-Block in `ChangeItem` (1.6) |
+| `CheckInventoryNumberDuplicate` über Nummer und `Id` | erledigt |
+| `EmployeeRepository`: `GetEmployeeByID`, `ChangeEmployee` | erledigt |
+| `EmployeeRepository.CreateNewEmployee` | umgesetzt, **Vor- und Nachname werden vertauscht**, Schritt 5 |
+| `IEmployeeRepository` ohne `email` und `phoneNumber` | erledigt |
+| `CSVImporter.GetEmployeesFromCSV` mit richtigen Spalten und Id aus der CSV | erledigt, Entscheidung 6b getroffen |
 | Import von Kategorien, Geräten und Ausleihen | **offen**, Schritt 6 |
+| Import tatsächlich ausführen, nur bei leerer Datenbank | **offen**, Schritt 6c und 6d, Datenbank hat noch 0 Zeilen |
+| `LendItemRepository` und `GetOpenLend` im Interface | **offen**, Schritt 8 |
 
-**Nächster Arbeitsschritt:** Migration für das entfernte `Email` erzeugen, dann die Duplikatprüfung
-korrigieren und eine Methode zum Anlegen von Geräten ergänzen (Schritt 5), danach Schritt 6.
+**Nächster Arbeitsschritt:** Den Namenstausch in `CreateNewEmployee` beheben, dann die Import-Methoden
+für Kategorien, Geräte und Ausleihen schreiben und den Import beim Start einmalig ausführen (Schritt 6).
+Mit den Zahlen aus Schritt 7 prüfen, ob alles angekommen ist.
 
 ---
 
