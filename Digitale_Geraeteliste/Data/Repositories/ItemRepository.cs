@@ -1,10 +1,11 @@
 ﻿using Digitale_Geraeteliste.Core.Interfaces;
 using Digitale_Geraeteliste.Core.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Xml.Linq;
 
 namespace Digitale_Geraeteliste.Data.Repositories
 {
@@ -50,8 +51,15 @@ namespace Digitale_Geraeteliste.Data.Repositories
             return _context.Items.Any(i => i.InventoryNumber == inventoryNumber && i.Id != itemId);
         }
 
-        public void Add(Item item)
+        public void CreateNewItem(string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isRetired, bool needsMaintenance)
         {
+            Item item = new Item(inventoryNumber,
+                name,
+                category,
+                description,
+                standardLendDuration,
+                isRetired,
+                needsMaintenance);
             _context.Items.Add(item);
             _context.SaveChanges();
         }

@@ -14,29 +14,86 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             _context = context;
         }
-        public void ChangeLendItem(LendItem lendItem, int itemId, int employeeId, DateTime lendDate, DateTime returnDate)
+        public void ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber)
         {
-            throw new NotImplementedException();
+            LendItem lendItem = _context.LendItems.Find(lendItemId) ?? throw new ArgumentException("Lend item not found", nameof(lendItemId));
+            if (lendItem.IsActive == false)
+            {
+                throw new InvalidOperationException("Cannot change a lend item that is returned.");
+            }
+            Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
+            Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
+            Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
+            List<string> toLog = new List<string>
+            {
+                $"----------------------------------------------------------------",
+                $"[{DateTime.Now}] Lend item with ID {lendItemId} changed.",
+                $"Old values:",
+                $"\t\t\t Item ID: {lendItem.ItemId}, Borrowed By: {lendItem.BorrowedBy}, Lend By: {lendItem.LendBy}",
+                $"\t\t\t Lend Date: {lendItem.LendDate}, Expected Return Date: {lendItem.ExpectedReturnDate}",
+                $"\t\t\t Affiliated Contract Number: {lendItem.AffiliatedContractNumber}, Duration: {lendItem.ExpectedReturnDate.Subtract(lendItem.LendDate).Days} days",
+            };
+            lendItem.Item = item;
+            lendItem.BorrowedBy = borrowedBy;
+            lendItem.BorrowedById = borrowedById;
+            lendItem.LendBy = lendBy;
+            lendItem.LendById = lendById;
+            lendItem.LendDate = lendDate;
+            if (duration > 0)
+            {
+                lendItem.ExpectedReturnDate = lendDate.AddDays(duration);
+            }
+            else
+            {
+                lendItem.ExpectedReturnDate = lendDate.AddDays(item.StandardLendDuration);
+            }
+            lendItem.AffiliatedContractNumber = affiliatedContractNumber;
+            string[] newValues = new string[]
+            {   $"\t\t\t |||||||||||||||||||||||||||||",
+                $"\t\t\t vvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+                $"New values:",
+                $"\t\t\t Item ID: {lendItem.ItemId}, Borrowed By: {lendItem.BorrowedBy}, Lend By: {lendItem.LendBy}",
+                $"\t\t\t Lend Date: {lendItem.LendDate}, Expected Return Date: {lendItem.ExpectedReturnDate}",
+                $"\t\t\t Affiliated Contract Number: {lendItem.AffiliatedContractNumber}, Duration: {lendItem.ExpectedReturnDate.Subtract(lendItem.LendDate).Days} days",
+            };
+            toLog.AddRange(newValues);
+            IEnumerable<string> logStrings = toLog;
+
+            File.AppendAllLines($"{Path.Combine(AppContext.BaseDirectory, "Logs", $"log{DateTime.Now:yyyyMMdd}.txt")}", logStrings);
         }
 
-        public LendItem CreateNewLendItem(int itemId, int employeeId, DateTime lendDate, DateTime returnDate)
+        public bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, int duration)
         {
-            throw new NotImplementedException();
+            Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
+            Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
+            Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
+            LendItem lendItem = new LendItem(lendDate, borrowedBy, item, lendBy, affiliatedContractNumber, duration);
+            _context.LendItems.Add(lendItem);
+            _context.SaveChanges();
+            return true;
         }
 
         public IEnumerable<LendItem> GetAllLendItems()
         {
-            throw new NotImplementedException();
+            return _context.LendItems;
         }
 
         public IEnumerable<LendItem> GetAllOverdueLendItems()
         {
-            throw new NotImplementedException();
+            List<LendItem> overdueLendItems = new List<LendItem>();
+            foreach (var lendItem in _context.LendItems)
+            {
+                if (lendItem.IsOverdue)
+                {
+                    overdueLendItems.Add(lendItem);
+                }
+            }
+            return overdueLendItems;
         }
 
         public LendItem GetLendItemById(int id)
         {
-            throw new NotImplementedException();
+            return _context.LendItems.Find(id) ?? throw new ArgumentException("Lend item not found", nameof(id));
         }
 
         public void ReturnLendItem(int lendItemId, DateTime returnDate)

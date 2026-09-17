@@ -28,7 +28,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public void CreateNewEmployee(string firstName, string lastName, string department)
         {
-            var employee = new Employee(firstName, lastName, department);
+            var employee = new Employee(lastName, firstName, department);
             _context.Employees.Add(employee);
             _context.SaveChanges();
         }

@@ -18,19 +18,23 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `Employee.Email` und zweiter Konstruktor entfernt (YAGNI, Schritt 2c) | erledigt, Migration `RemoveEmployeeEmail` angewendet |
 | `required` entfernt, Startwerte bzw. `= null!` | erledigt |
 | Repository-Variablen in `App.xaml.cs` umbenannt | erledigt |
-| `ItemRepository`: `GetAllItems`, `GetItemById`, `Add`, `ChangeItem` | erledigt, offen nur der allgemeine `catch`-Block in `ChangeItem` (1.6) |
-| `CheckInventoryNumberDuplicate` über Nummer und `Id` | erledigt |
+| `ItemRepository`: `GetAllItems`, `Add`, `ChangeItem`, Duplikatprüfung | erledigt, offen nur der allgemeine `catch`-Block in `ChangeItem` (1.6) |
+| `ItemRepository.GetItemById` | gibt `null` über `?? null!` zurück, Rückgabetyp sagt aber `Item`, siehe 1.6 |
 | `EmployeeRepository`: `GetEmployeeByID`, `ChangeEmployee` | erledigt |
-| `EmployeeRepository.CreateNewEmployee` | umgesetzt, **Vor- und Nachname werden vertauscht**, Schritt 5 |
-| `IEmployeeRepository` ohne `email` und `phoneNumber` | erledigt |
-| `CSVImporter.GetEmployeesFromCSV` mit richtigen Spalten und Id aus der CSV | erledigt, Entscheidung 6b getroffen |
-| Import von Kategorien, Geräten und Ausleihen | **offen**, Schritt 6 |
-| Import tatsächlich ausführen, nur bei leerer Datenbank | **offen**, Schritt 6c und 6d, Datenbank hat noch 0 Zeilen |
-| `LendItemRepository` und `GetOpenLend` im Interface | **offen**, Schritt 8 |
+| `EmployeeRepository.CreateNewEmployee` | **Vor- und Nachname weiterhin vertauscht**, der Commit dazu hat nur den Importer geändert |
+| `LendItem` ohne `LendItemToEmployee`, Konstruktor ohne `id`, Fristberechnung im Konstruktor | erledigt |
+| `CSVImporter` für alle vier Dateien, Ids aus der CSV | erledigt |
+| CSV-Dateien unter `Data/Testdata`, Kopieren ins Ausgabeverzeichnis in der `.csproj` | erledigt, greift ab dem nächsten erfolgreichen Build |
+| `ILendItemRepository` passt nicht zu `LendItemRepository` | **Build rot**, `CreateNewLendItem` und `ChangeLendItem` haben neue Signaturen |
+| `ImportAllCSVData` | geschrieben, **ohne `SaveChanges`**, wird nirgends aufgerufen, Schritt 6 |
+| `ChangeLendItem` | **ohne `SaveChanges`**, Ordner `Logs` wird nicht angelegt |
+| `GetAllLendItems`, `GetAllOverdueLendItems` | funktionsfähig, ohne `Include` und ohne Filterung in der Datenbank (1.3, 1.4) |
+| Umgang mit "nicht gefunden" | in drei Repositories drei verschiedene Varianten, 1.6 |
+| `GetOpenLend` für R1 | **offen**, Schritt 8 |
 
-**Nächster Arbeitsschritt:** Den Namenstausch in `CreateNewEmployee` beheben, dann die Import-Methoden
-für Kategorien, Geräte und Ausleihen schreiben und den Import beim Start einmalig ausführen (Schritt 6).
-Mit den Zahlen aus Schritt 7 prüfen, ob alles angekommen ist.
+**Nächster Arbeitsschritt:** Interface an die neuen Signaturen anpassen, damit der Build grün wird. Dann
+`SaveChanges` im Import ergänzen, den Import in `App.OnStartup` aufrufen und mit den Zahlen aus Schritt 7
+prüfen. Erst danach `ChangeLendItem` und die Abfragen überarbeiten.
 
 ---
 

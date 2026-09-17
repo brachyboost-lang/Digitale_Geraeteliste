@@ -22,8 +22,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
                     {
                         var values = line.Split(';');
                         var employee = new Employee(
-                            firstName: values[2],
                             lastName: values[1],
+                            firstName: values[2],
                             department: values[4]
                         );
                         employee.Id = int.Parse(values[0]);
