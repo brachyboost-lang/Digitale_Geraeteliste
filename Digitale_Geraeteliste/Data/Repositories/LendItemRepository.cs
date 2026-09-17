@@ -83,7 +83,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public IEnumerable<LendItem> GetAllOverdueLendItems()
         {
             List<LendItem> overdueLendItems = new List<LendItem>();
-            foreach (var lendItem in _context.LendItems)
+            foreach (var lendItem in _context.LendItems.Include(l => l.BorrowedBy).Include(l => l.LendBy).Include(l => l.Item))
             {
                 if (lendItem.IsOverdue)
                 {
@@ -95,7 +95,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public LendItem GetLendItemById(int id)
         {
-            return _context.LendItems.Find(id) ?? throw new ArgumentException("Lend item not found", nameof(id));
+            return _context.LendItems.Include(l => l.Item).Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == id) ?? throw new ArgumentException("Lend item not found", nameof(id));
         }
 
         public void ReturnLendItem(int lendItemId, DateTime returnDate)
