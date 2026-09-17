@@ -60,6 +60,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             IEnumerable<string> logStrings = toLog;
 
             File.AppendAllLines($"{Path.Combine(AppContext.BaseDirectory, "Logs", $"log{DateTime.Now:yyyyMMdd}.txt")}", logStrings);
+            _context.SaveChanges();
         }
 
         public bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, int duration)
