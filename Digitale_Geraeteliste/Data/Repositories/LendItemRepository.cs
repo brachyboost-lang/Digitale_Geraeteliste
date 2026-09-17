@@ -28,7 +28,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             List<string> toLog = new List<string>
             {
                 $"----------------------------------------------------------------",
-                $"[{DateTime.Now}] Lend item with ID {lendItemId} changed.",
+                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Lend item with ID {lendItemId} changed.",
                 $"Old values:",
                 $"\t\t\t Item ID: {lendItem.ItemId}, Borrowed By: {lendItem.BorrowedBy}, Lend By: {lendItem.LendBy}",
                 $"\t\t\t Lend Date: {lendItem.LendDate}, Expected Return Date: {lendItem.ExpectedReturnDate}",
@@ -59,10 +59,6 @@ namespace Digitale_Geraeteliste.Data.Repositories
             };
             toLog.AddRange(newValues);
             IEnumerable<string> logStrings = toLog;
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "Logs")))
-            {
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Logs"));
-            }
             File.AppendAllLines(_logPath, logStrings);
             _context.SaveChanges();
         }
@@ -113,9 +109,13 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public bool ImportAllCSVData()
         {
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "Logs")))
+            {
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Logs"));
+            }
             if (_context.Categories.Any() || _context.Items.Any() || _context.Employees.Any() || _context.LendItems.Any())
             {
-                string logstring = "Database already contains data. Skipping CSV import.";
+                string logstring = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Database already contains data. Skipping CSV import.";
                 File.AppendAllLines(_logPath, new[] { logstring });
                 return false;
             }
@@ -151,7 +151,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             }
             catch (Exception ex)
             {
-                string logstring = $"Error importing CSV data: {ex.Message}";
+                string logstring = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Error importing CSV data: {ex.Message}";
                 File.AppendAllLines(_logPath, new[] { logstring });
                 return false;
             }

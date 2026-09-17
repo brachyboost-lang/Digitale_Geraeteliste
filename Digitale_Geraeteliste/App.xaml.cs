@@ -17,6 +17,7 @@ namespace Digitale_Geraeteliste
             EmployeeRepository employeeRepository = new EmployeeRepository(lendContext);
             ItemRepository itemRepository = new ItemRepository(lendContext);
             LendItemRepository lendItemRepository = new LendItemRepository(lendContext);
+            lendItemRepository.ImportAllCSVData();
         }
     }
 

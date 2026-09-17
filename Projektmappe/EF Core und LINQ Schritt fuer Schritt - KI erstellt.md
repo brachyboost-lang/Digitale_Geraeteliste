@@ -25,15 +25,17 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `CSVImporter` für alle vier Dateien, Ids aus der CSV | erledigt |
 | CSV-Dateien unter `Data/Testdata`, Kopieren ins Ausgabeverzeichnis | erledigt, im Ausgabeordner geprüft |
 | `ILendItemRepository` an neue Signaturen angepasst | erledigt, Build grün |
-| `ImportAllCSVData` | geschrieben, **ohne `SaveChanges`**, wird nirgends aufgerufen, Datenbank hat 0 Zeilen, Schritt 6 |
-| `ChangeLendItem` | **ohne `SaveChanges`**, Ordner `Logs` wird nicht angelegt |
+| `ImportAllCSVData` mit `SaveChanges` | umgesetzt, **wird nirgends aufgerufen**, Datenbank hat 0 Zeilen, Schritt 6 |
+| Logging im Import | **legt den Ordner `Logs` nicht an**, ein Fehler im `catch`-Block bringt die Anwendung zum Absturz |
+| `ChangeLendItem` mit `SaveChanges` und angelegtem `Logs`-Ordner | umgesetzt, Log wird **vor** dem Speichern geschrieben |
+| Logpfad als Feld `_logPath` | Datum im Dateinamen wird beim Programmstart festgelegt, nicht beim Schreiben |
 | `GetAllLendItems`, `GetAllOverdueLendItems` | funktionsfähig, ohne `Include` und ohne Filterung in der Datenbank (1.3, 1.4) |
-| Umgang mit "nicht gefunden" | in drei Repositories drei verschiedene Varianten, 1.6 |
+| Umgang mit "nicht gefunden" | in drei Repositories unterschiedlich, 1.6 |
 | `GetOpenLend` für R1 | **offen**, Schritt 8 |
 
-**Nächster Arbeitsschritt:** Interface an die neuen Signaturen anpassen, damit der Build grün wird. Dann
-`SaveChanges` im Import ergänzen, den Import in `App.OnStartup` aufrufen und mit den Zahlen aus Schritt 7
-prüfen. Erst danach `ChangeLendItem` und die Abfragen überarbeiten.
+**Nächster Arbeitsschritt:** Das Anlegen des `Logs`-Ordners in eine gemeinsame Hilfsmethode ziehen, die
+auch der Import verwendet. Dann den Import in `App.OnStartup` aufrufen, die Anwendung einmal starten und mit
+den Zahlen aus Schritt 7 prüfen. Danach Schritt 8 und die Service-Schicht.
 
 ---
 
