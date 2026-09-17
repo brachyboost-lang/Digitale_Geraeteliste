@@ -17,7 +17,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public bool ChangeEmployee(Employee employee, string firstName, string lastName, string department)
         {
             int changes = 0;
-            Employee employeeToChange = _context.Employees.Find(employee.Id) ?? throw new InvalidOperationException("Employee not found");
+            Employee employeeToChange = _context.Employees.Find(employee.Id) ?? throw new ArgumentException("Employee not found", nameof(employee.Id));
             employeeToChange.FirstName = firstName;
             employeeToChange.LastName = lastName;
             employeeToChange.FullName = employeeToChange.CreateFullName(firstName, lastName);
@@ -35,7 +35,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public Employee GetEmployeeByID(int id)
         {
-            return _context.Employees.Find(id) ?? throw new InvalidOperationException("Employee not found");
+            return _context.Employees.Find(id) ?? throw new ArgumentException("Employee not found", nameof(id));
         }
     }
 }
