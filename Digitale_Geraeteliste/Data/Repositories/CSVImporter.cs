@@ -76,8 +76,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
                             category: category,
                             description: values[4],
                             standardLendDuration: int.Parse(values[5]),
-                            isRetired: bool.Parse(values[6]),
-                            needsMaintenance: bool.Parse(values[7])
+                            isRetired: bool.Parse(values[7]),
+                            needsMaintenance: bool.Parse(values[8])
                         );
                         item.Id = int.Parse(values[0]);
                         items.Add(item);
