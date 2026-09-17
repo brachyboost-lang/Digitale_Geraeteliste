@@ -140,6 +140,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 {
                     _context.LendItems.Add(lend);
                 }
+                _context.SaveChanges();
                 return true;
             }
             catch (Exception ex)

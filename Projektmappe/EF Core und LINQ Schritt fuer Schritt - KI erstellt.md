@@ -18,15 +18,14 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `Employee.Email` und zweiter Konstruktor entfernt (YAGNI, Schritt 2c) | erledigt, Migration `RemoveEmployeeEmail` angewendet |
 | `required` entfernt, Startwerte bzw. `= null!` | erledigt |
 | Repository-Variablen in `App.xaml.cs` umbenannt | erledigt |
-| `ItemRepository`: `GetAllItems`, `Add`, `ChangeItem`, Duplikatprüfung | erledigt, offen nur der allgemeine `catch`-Block in `ChangeItem` (1.6) |
+| `ItemRepository`: `GetAllItems`, `CreateNewItem`, `ChangeItem`, Duplikatprüfung | erledigt, offen nur der allgemeine `catch`-Block in `ChangeItem` (1.6) |
 | `ItemRepository.GetItemById` | gibt `null` über `?? null!` zurück, Rückgabetyp sagt aber `Item`, siehe 1.6 |
-| `EmployeeRepository`: `GetEmployeeByID`, `ChangeEmployee` | erledigt |
-| `EmployeeRepository.CreateNewEmployee` | **Vor- und Nachname weiterhin vertauscht**, der Commit dazu hat nur den Importer geändert |
+| `EmployeeRepository`: `GetEmployeeByID`, `ChangeEmployee`, `CreateNewEmployee` | erledigt, Namensreihenfolge korrigiert |
 | `LendItem` ohne `LendItemToEmployee`, Konstruktor ohne `id`, Fristberechnung im Konstruktor | erledigt |
 | `CSVImporter` für alle vier Dateien, Ids aus der CSV | erledigt |
-| CSV-Dateien unter `Data/Testdata`, Kopieren ins Ausgabeverzeichnis in der `.csproj` | erledigt, greift ab dem nächsten erfolgreichen Build |
-| `ILendItemRepository` passt nicht zu `LendItemRepository` | **Build rot**, `CreateNewLendItem` und `ChangeLendItem` haben neue Signaturen |
-| `ImportAllCSVData` | geschrieben, **ohne `SaveChanges`**, wird nirgends aufgerufen, Schritt 6 |
+| CSV-Dateien unter `Data/Testdata`, Kopieren ins Ausgabeverzeichnis | erledigt, im Ausgabeordner geprüft |
+| `ILendItemRepository` an neue Signaturen angepasst | erledigt, Build grün |
+| `ImportAllCSVData` | geschrieben, **ohne `SaveChanges`**, wird nirgends aufgerufen, Datenbank hat 0 Zeilen, Schritt 6 |
 | `ChangeLendItem` | **ohne `SaveChanges`**, Ordner `Logs` wird nicht angelegt |
 | `GetAllLendItems`, `GetAllOverdueLendItems` | funktionsfähig, ohne `Include` und ohne Filterung in der Datenbank (1.3, 1.4) |
 | Umgang mit "nicht gefunden" | in drei Repositories drei verschiedene Varianten, 1.6 |
