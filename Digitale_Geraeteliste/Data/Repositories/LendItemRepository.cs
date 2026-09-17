@@ -58,7 +58,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
             };
             toLog.AddRange(newValues);
             IEnumerable<string> logStrings = toLog;
-
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "Logs")))
+            {
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Logs"));
+            }
             File.AppendAllLines($"{Path.Combine(AppContext.BaseDirectory, "Logs", $"log{DateTime.Now:yyyyMMdd}.txt")}", logStrings);
             _context.SaveChanges();
         }
