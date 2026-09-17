@@ -30,7 +30,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 $"----------------------------------------------------------------",
                 $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Lend item with ID {lendItemId} changed.",
                 $"Old values:",
-                $"\t\t\t Item ID: {lendItem.ItemId}, Borrowed By: {lendItem.BorrowedBy}, Lend By: {lendItem.LendBy}",
+                $"\t\t\t Item ID: {lendItem.ItemId}, Borrowed By: {lendItem.BorrowedBy.FullName}, Lend By: {lendItem.LendBy.FullName}",
                 $"\t\t\t Lend Date: {lendItem.LendDate}, Expected Return Date: {lendItem.ExpectedReturnDate}",
                 $"\t\t\t Affiliated Contract Number: {lendItem.AffiliatedContractNumber}, Duration: {lendItem.ExpectedReturnDate.Subtract(lendItem.LendDate).Days} days",
             };
