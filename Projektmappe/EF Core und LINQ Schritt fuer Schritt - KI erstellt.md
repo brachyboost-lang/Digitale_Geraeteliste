@@ -25,17 +25,20 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `CSVImporter` für alle vier Dateien, Ids aus der CSV | erledigt |
 | CSV-Dateien unter `Data/Testdata`, Kopieren ins Ausgabeverzeichnis | erledigt, im Ausgabeordner geprüft |
 | `ILendItemRepository` an neue Signaturen angepasst | erledigt, Build grün |
-| `ImportAllCSVData` mit `SaveChanges` | umgesetzt, **wird nirgends aufgerufen**, Datenbank hat 0 Zeilen, Schritt 6 |
-| Logging im Import | **legt den Ordner `Logs` nicht an**, ein Fehler im `catch`-Block bringt die Anwendung zum Absturz |
-| `ChangeLendItem` mit `SaveChanges` und angelegtem `Logs`-Ordner | umgesetzt, Log wird **vor** dem Speichern geschrieben |
-| Logpfad als Feld `_logPath` | Datum im Dateinamen wird beim Programmstart festgelegt, nicht beim Schreiben |
+| Import beim Start in `App.OnStartup` | **erledigt und geprüft**: 8 Kategorien, 120 Geräte, 45 Mitarbeiter, 53 Ausleihen, 21 offen, Umlaute korrekt, keine Fremdschlüsselverstöße |
+| Logging: Ordner beim Start, Dateiname beim Schreiben, `InnerException` | erledigt |
+| `ChangeLendItem`: erst speichern, dann loggen | erledigt |
+| `ChangeLendItem`: `lendItem.BorrowedBy.FullName` | **stürzt ab dem zweiten Programmstart ab**, `Find` lädt die Navigationseigenschaften nicht (1.4) |
+| `ChangeLendItem`: neue `ItemId` im Log | zeigt noch die alte, weil der Text vor `SaveChanges` gebaut wird |
+| `ChangeLendItem` ohne eigenes Anlegen des `Logs`-Ordners | funktioniert nur, weil der Import vorher lief, versteckte Abhängigkeit |
+| `GetItemById` mit `return itemById!;` | unterdrückt weiterhin die Null-Warnung, Rückgabetyp sollte `Item?` sein (1.6) |
 | `GetAllLendItems`, `GetAllOverdueLendItems` | funktionsfähig, ohne `Include` und ohne Filterung in der Datenbank (1.3, 1.4) |
 | Umgang mit "nicht gefunden" | in drei Repositories unterschiedlich, 1.6 |
 | `GetOpenLend` für R1 | **offen**, Schritt 8 |
 
-**Nächster Arbeitsschritt:** Das Anlegen des `Logs`-Ordners in eine gemeinsame Hilfsmethode ziehen, die
-auch der Import verwendet. Dann den Import in `App.OnStartup` aufrufen, die Anwendung einmal starten und mit
-den Zahlen aus Schritt 7 prüfen. Danach Schritt 8 und die Service-Schicht.
+**Nächster Arbeitsschritt:** Den Absturz in `ChangeLendItem` beheben, dann Schritt 8: `GetOpenLend` und
+`GetAllOverdueLendItems` mit `Include`. Danach eine einheitliche Regel für "nicht gefunden". Damit ist die
+Datenschicht fertig, und Phase 3 mit dem `LendService` beginnt.
 
 ---
 

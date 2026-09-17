@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digitale_Geraeteliste.Data.Repositories
 {
@@ -17,14 +18,14 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         public void ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber)
         {
-            LendItem lendItem = _context.LendItems.Find(lendItemId) ?? throw new ArgumentException("Lend item not found", nameof(lendItemId));
+            LendItem lendItem = _context.LendItems.Include(l => l.Item).FirstOrDefault(l => l.Id == lendItemId) ?? throw new ArgumentException("Lend item not found", nameof(lendItemId));
             if (lendItem.IsActive == false)
             {
                 throw new InvalidOperationException("Cannot change a lend item that is returned.");
             }
-            Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
-            Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
-            Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
+            Item item = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
+            Employee borrowedBy = _context.Employees.Include(e => e.Department).FirstOrDefault(e => e.Id == borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
+            Employee lendBy = _context.Employees.Include(e => e.Department).FirstOrDefault(e => e.Id == lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
             List<string> toLog = new List<string>
             {
                 $"----------------------------------------------------------------",
@@ -49,6 +50,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 lendItem.ExpectedReturnDate = lendDate.AddDays(item.StandardLendDuration);
             }
             lendItem.AffiliatedContractNumber = affiliatedContractNumber;
+            _context.SaveChanges();
             string[] newValues = new string[]
             {   $"\t\t\t |||||||||||||||||||||||||||||",
                 $"\t\t\t vvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
@@ -59,15 +61,14 @@ namespace Digitale_Geraeteliste.Data.Repositories
             };
             toLog.AddRange(newValues);
             IEnumerable<string> logStrings = toLog;
-            _context.SaveChanges();
             File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logStrings);
         }
 
         public bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, int duration)
         {
-            Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
-            Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
-            Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
+            Item item = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
+            Employee lendBy = _context.Employees.Include(e => e.Department).FirstOrDefault(e => e.Id == lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
+            Employee borrowedBy = _context.Employees.Include(e => e.Department).FirstOrDefault(e => e.Id == borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
             LendItem lendItem = new LendItem(lendDate, borrowedBy, item, lendBy, affiliatedContractNumber, duration);
             _context.LendItems.Add(lendItem);
             _context.SaveChanges();
@@ -94,12 +95,12 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public LendItem GetLendItemById(int id)
         {
-            return _context.LendItems.Find(id) ?? throw new ArgumentException("Lend item not found", nameof(id));
+            return _context.LendItems.Include(l => l.Item).FirstOrDefault(l => l.Id == id) ?? throw new ArgumentException("Lend item not found", nameof(id));
         }
 
         public void ReturnLendItem(int lendItemId, DateTime returnDate)
         {
-            LendItem? lendItem = _context.LendItems.Find(lendItemId);
+            LendItem? lendItem = _context.LendItems.Include(l => l.Item).FirstOrDefault(l => l.Id == lendItemId);
             if (lendItem != null)
             {
                 lendItem.ReturnItem(returnDate);
