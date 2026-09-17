@@ -36,7 +36,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public Employee GetEmployeeByID(int id)
         {
-            return _context.Employees.Find(id) ?? throw new ArgumentException("Employee not found", id.ToString());
+            return _context.Employees.Find(id) ?? throw new ArgumentException("Employee not found", nameof(id));
         }
     }
 }

@@ -29,9 +29,9 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | Logging: Ordner beim Start, Dateiname beim Schreiben, `InnerException` | erledigt |
 | `ChangeLendItem`: erst speichern, dann loggen | erledigt |
 | `Include` nur noch auf Navigationseigenschaften, `Find` für einzelne Entitäten ohne Verweise | erledigt |
-| Zweiter Programmstart: Import wird übersprungen, keine Duplikate | **geprüft**, drei Einträge "already contains data" im Log |
-| `ChangeLendItem` lädt `BorrowedBy` und `LendBy` mit | erledigt im Code, **Änderungsweg zur Laufzeit noch nicht getestet** (Test lief gegen die zurückgegebene Ausleihe 1) |
-| `ChangeLendItem` bei zurückgegebener Ausleihe | loggt jetzt nur noch und kehrt still zurück, der Aufrufer erfährt nichts, noch nicht gebaut und ausgeführt |
+| Zweiter Programmstart: Import wird übersprungen, keine Duplikate | **geprüft**, mehrere Einträge "already contains data" im Log |
+| `ChangeLendItem` lädt `BorrowedBy` und `LendBy` mit | **zur Laufzeit geprüft**, Ausleihe 31 zweimal geändert, alte und neue Namen korrekt im Log |
+| `ChangeLendItem` und `ReturnLendItem` geben `bool` zurück | erledigt, zurückgegebene Ausleihe liefert `false` |
 | `GetLendItemById` mit `Include` für Gerät und beide Mitarbeiter | erledigt |
 | `ChangeLendItem`: neue `ItemId` im Log | erledigt, Text wird jetzt nach `SaveChanges` gebaut |
 | `ChangeLendItem` ohne eigenes Anlegen des `Logs`-Ordners | funktioniert nur, weil der Import vorher lief, versteckte Abhängigkeit |
@@ -40,9 +40,9 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `GetAllLendItems` | gibt das `DbSet` ohne `Include` und ohne `ToList` zurück |
 | `GetOpenLendByItemId` für R1 mit `FirstOrDefault` und `LendItem?` | erledigt |
 
-**Nächster Arbeitsschritt:** Neu bauen und `ChangeLendItem` gegen eine **offene** Ausleihe testen, etwa Id 31.
-Dann `ChangeLendItem` bei zurückgegebenen Ausleihen und `ReturnLendItem` auf eine einheitliche Fehlerbehandlung
-bringen. Damit ist die Datenschicht fertig, und Phase 3 mit dem `LendService` beginnt.
+**Stand:** Die Datenschicht ist abgeschlossen und zur Laufzeit geprüft. Weiter geht es mit dem
+[Service und Tests Leitfaden - KI erstellt.md](Service%20und%20Tests%20Leitfaden%20-%20KI%20erstellt.md).
+Kleinere offene Punkte aus dieser Tabelle lassen sich nebenbei erledigen, keiner davon blockiert Phase 3.
 
 ---
 
