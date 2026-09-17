@@ -10,6 +10,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
     internal class LendItemRepository : ILendItemRepository
     {
         private readonly LendContext _context;
+        private readonly string _logPath = $"{Path.Combine(AppContext.BaseDirectory, "Logs", $"log{DateTime.Now:yyyyMMdd}.txt")}";
         public LendItemRepository(LendContext context)
         {
             _context = context;
@@ -62,7 +63,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             {
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Logs"));
             }
-            File.AppendAllLines($"{Path.Combine(AppContext.BaseDirectory, "Logs", $"log{DateTime.Now:yyyyMMdd}.txt")}", logStrings);
+            File.AppendAllLines(_logPath, logStrings);
             _context.SaveChanges();
         }
 
@@ -114,7 +115,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             if (_context.Categories.Any() || _context.Items.Any() || _context.Employees.Any() || _context.LendItems.Any())
             {
-                Console.WriteLine("Database already contains data. Skipping CSV import.");
+                string logstring = "Database already contains data. Skipping CSV import.";
+                File.AppendAllLines(_logPath, new[] { logstring });
                 return false;
             }
             var employeePath = Path.Combine(AppContext.BaseDirectory, "Data", "Testdata", "mitarbeiter.csv");
@@ -149,7 +151,8 @@ namespace Digitale_Geraeteliste.Data.Repositories
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error importing CSV data: {ex.Message}");
+                string logstring = $"Error importing CSV data: {ex.Message}";
+                File.AppendAllLines(_logPath, new[] { logstring });
                 return false;
             }
         }
