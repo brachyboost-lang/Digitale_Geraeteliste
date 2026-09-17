@@ -34,5 +34,86 @@ namespace Digitale_Geraeteliste.Data.Repositories
             }
             return employees;
         }
+        public static IEnumerable<Category> GetCategoriesFromCSV(string filePath)
+        {
+            var categories = new List<Category>();
+            using (var reader = new StreamReader(filePath))
+            {
+                reader.ReadLine(); // skips the header line - ghetto fix for my testdata csv, could be improved by checking if the first line is a header
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line != null)
+                    {
+                        var values = line.Split(';');
+                        var category = new Category(
+                            name: values[1]
+                        );
+                        category.Id = int.Parse(values[0]);
+                        categories.Add(category);
+                    }
+                }
+            }
+            return categories;
+        }
+        public static IEnumerable<Item> GetItemsFromCSV(string filePath, IEnumerable<Category> categories)
+        {
+            var items = new List<Item>();
+            using (var reader = new StreamReader(filePath))
+            {
+                reader.ReadLine(); // skips the header line - ghetto fix for my testdata csv, could be improved by checking if the first line is a header
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line != null)
+                    {
+                        var values = line.Split(';');
+                        var categoryId = int.Parse(values[3]);
+                        var category = categories.FirstOrDefault(c => c.Id == categoryId) ?? throw new InvalidOperationException($"Category with ID {categoryId} not found");
+                        var item = new Item(
+                            inventoryNumber: values[1],
+                            name: values[2],
+                            category: category,
+                            description: values[4],
+                            standardLendDuration: int.Parse(values[5]),
+                            isRetired: bool.Parse(values[6]),
+                            needsMaintenance: bool.Parse(values[7])
+                        );
+                        item.Id = int.Parse(values[0]);
+                        items.Add(item);
+                    }
+                }
+            }
+            return items;
+        }
+        public static IEnumerable<LendItem> GetLendItemsFromCSV(string filePath, IEnumerable<Item> items, IEnumerable<Employee> employees)
+        {
+            var lendItems = new List<LendItem>();
+            using (var reader = new StreamReader(filePath))
+            {
+                reader.ReadLine(); // skips the header line - ghetto fix for my testdata csv, could be improved by checking if the first line is a header
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line != null)
+                    {
+                        var values = line.Split(';');
+                        var itemId = int.Parse(values[1]);
+                        var employeeId = int.Parse(values[2]);
+                        var item = items.FirstOrDefault(i => i.Id == itemId) ?? throw new InvalidOperationException($"Item with ID {itemId} not found");
+                        var employee = employees.FirstOrDefault(e => e.Id == employeeId) ?? throw new InvalidOperationException($"Employee with ID {employeeId} not found");
+                        var lendItem = new LendItem(
+                            item: item,
+                            borrowedBy: employee,
+                            lendDate: DateTime.Parse(values[3]),
+                            returnDate: string.IsNullOrEmpty(values[4]) ? null : DateTime.Parse(values[4])
+                        );
+                        lendItem.Id = int.Parse(values[0]);
+                        lendItems.Add(lendItem);
+                    }
+                }
+            }
+            return lendItems;
+        }
     }
 }
