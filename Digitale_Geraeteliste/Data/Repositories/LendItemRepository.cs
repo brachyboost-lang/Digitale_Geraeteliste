@@ -80,6 +80,11 @@ namespace Digitale_Geraeteliste.Data.Repositories
             return _context.LendItems;
         }
 
+        public IEnumerable<LendItem> GetOpenLendByItemId(int itemId)
+        {
+            return _context.LendItems.Include(l => l.BorrowedBy).Include(l => l.LendBy).Include(l => l.Item).Where(l => l.ItemId == itemId && l.IsActive);
+        }
+
         public IEnumerable<LendItem> GetAllOverdueLendItems()
         {
             List<LendItem> overdueLendItems = new List<LendItem>();
