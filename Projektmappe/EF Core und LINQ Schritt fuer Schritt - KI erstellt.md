@@ -28,8 +28,10 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | Import beim Start in `App.OnStartup` | **erledigt und geprüft**: 8 Kategorien, 120 Geräte, 45 Mitarbeiter, 53 Ausleihen, 21 offen, Umlaute korrekt, keine Fremdschlüsselverstöße |
 | Logging: Ordner beim Start, Dateiname beim Schreiben, `InnerException` | erledigt |
 | `ChangeLendItem`: erst speichern, dann loggen | erledigt |
-| `ChangeLendItem`: `lendItem.BorrowedBy.FullName` | **stürzt ab dem zweiten Programmstart ab**, `Find` lädt die Navigationseigenschaften nicht (1.4) |
-| `ChangeLendItem`: neue `ItemId` im Log | zeigt noch die alte, weil der Text vor `SaveChanges` gebaut wird |
+| `Include` nur noch auf Navigationseigenschaften, `Find` für einzelne Entitäten ohne Verweise | erledigt |
+| `ChangeLendItem` lädt `BorrowedBy` und `LendBy` mit | erledigt im Code, **zur Laufzeit noch nicht geprüft** (zweiter Programmstart) |
+| `GetLendItemById` und `ReturnLendItem` mit `Find` | liefern die Ausleihe ohne Gerät und Mitarbeiter, reicht für `ReturnLendItem`, nicht für eine Detailanzeige |
+| `ChangeLendItem`: neue `ItemId` im Log | erledigt, Text wird jetzt nach `SaveChanges` gebaut |
 | `ChangeLendItem` ohne eigenes Anlegen des `Logs`-Ordners | funktioniert nur, weil der Import vorher lief, versteckte Abhängigkeit |
 | `GetItemById` mit `return itemById!;` | unterdrückt weiterhin die Null-Warnung, Rückgabetyp sollte `Item?` sein (1.6) |
 | `GetAllLendItems`, `GetAllOverdueLendItems` | funktionsfähig, ohne `Include` und ohne Filterung in der Datenbank (1.3, 1.4) |
