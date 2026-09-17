@@ -9,7 +9,6 @@ namespace Digitale_Geraeteliste.Data.Repositories
 {
     public class CSVImporter
     {
-
         public static IEnumerable<Employee> GetEmployeesFromCSV(string filePath)
         {
             var employees = new List<Employee>();
