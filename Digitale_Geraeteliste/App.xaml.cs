@@ -18,6 +18,7 @@ namespace Digitale_Geraeteliste
             ItemRepository itemRepository = new ItemRepository(lendContext);
             LendItemRepository lendItemRepository = new LendItemRepository(lendContext);
             lendItemRepository.ImportAllCSVData();
+            lendItemRepository.ChangeLendItem(1, 1, 1, 1, DateTime.Now.AddDays(-10), 7, "Contract123");
         }
     }
 

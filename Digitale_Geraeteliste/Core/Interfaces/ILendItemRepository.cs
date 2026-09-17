@@ -14,6 +14,6 @@ namespace Digitale_Geraeteliste.Core.Interfaces
         void ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber);
         void ReturnLendItem(int lendItemId, DateTime returnDate);
         IEnumerable<LendItem> GetAllOverdueLendItems();
-        IEnumerable<LendItem> GetOpenLendByItemId(int itemId);
+        LendItem? GetOpenLendByItemId(int itemId);
     }
 }

@@ -30,17 +30,16 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | `ChangeLendItem`: erst speichern, dann loggen | erledigt |
 | `Include` nur noch auf Navigationseigenschaften, `Find` für einzelne Entitäten ohne Verweise | erledigt |
 | `ChangeLendItem` lädt `BorrowedBy` und `LendBy` mit | erledigt im Code, **zur Laufzeit noch nicht geprüft** (zweiter Programmstart) |
-| `GetLendItemById` und `ReturnLendItem` mit `Find` | liefern die Ausleihe ohne Gerät und Mitarbeiter, reicht für `ReturnLendItem`, nicht für eine Detailanzeige |
+| `GetLendItemById` mit `Include` für Gerät und beide Mitarbeiter | erledigt |
 | `ChangeLendItem`: neue `ItemId` im Log | erledigt, Text wird jetzt nach `SaveChanges` gebaut |
 | `ChangeLendItem` ohne eigenes Anlegen des `Logs`-Ordners | funktioniert nur, weil der Import vorher lief, versteckte Abhängigkeit |
-| `GetItemById` mit `return itemById!;` | unterdrückt weiterhin die Null-Warnung, Rückgabetyp sollte `Item?` sein (1.6) |
-| `GetAllLendItems`, `GetAllOverdueLendItems` | funktionsfähig, ohne `Include` und ohne Filterung in der Datenbank (1.3, 1.4) |
-| Umgang mit "nicht gefunden" | in drei Repositories unterschiedlich, 1.6 |
-| `GetOpenLend` für R1 | **offen**, Schritt 8 |
+| "Nicht gefunden" einheitlich als `ArgumentException` | erledigt in allen Such-Methoden, **Ausnahme:** `ReturnLendItem` tut bei unbekannter Id still nichts |
+| `GetAllOverdueLendItems` mit `Include` | erledigt, filtert weiterhin im Arbeitsspeicher (1.3) |
+| `GetAllLendItems` | gibt das `DbSet` ohne `Include` und ohne `ToList` zurück |
+| `GetOpenLendByItemId` für R1 | umgesetzt, gibt eine Menge statt höchstens eines Elements zurück und wird nicht ausgeführt (1.2, 1.3) |
 
-**Nächster Arbeitsschritt:** Den Absturz in `ChangeLendItem` beheben, dann Schritt 8: `GetOpenLend` und
-`GetAllOverdueLendItems` mit `Include`. Danach eine einheitliche Regel für "nicht gefunden". Damit ist die
-Datenschicht fertig, und Phase 3 mit dem `LendService` beginnt.
+**Nächster Arbeitsschritt:** Den Laufzeittest mit zweitem Programmstart nachholen. Dann `GetOpenLendByItemId`
+und `ReturnLendItem` nachziehen. Damit ist die Datenschicht fertig, und Phase 3 mit dem `LendService` beginnt.
 
 ---
 

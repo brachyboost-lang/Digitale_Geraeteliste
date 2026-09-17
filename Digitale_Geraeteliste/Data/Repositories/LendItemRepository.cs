@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
+using System.Windows.Documents;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Digitale_Geraeteliste.Data.Repositories
 {
@@ -19,14 +21,18 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public void ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber)
         {
             LendItem lendItem = _context.LendItems.Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == lendItemId) ?? throw new ArgumentException("Lend item not found", nameof(lendItemId));
-            if (lendItem.IsActive == false)
+            switch (lendItem.IsActive)
             {
-                throw new InvalidOperationException("Cannot change a lend item that is returned.");
-            }
-            Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
-            Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
-            Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
-            List<string> toLog = new List<string>
+                case false when lendItem.IsActive == false:
+                    string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Cannot change a lend item that is returned.";
+                    File.AppendAllText(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logMessage);
+                    break;
+                default:
+
+                    Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
+                    Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
+                    Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
+                    List<string> toLog = new List<string>
             {
                 $"----------------------------------------------------------------",
                 $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Lend item with ID {lendItemId} changed.",
@@ -35,33 +41,35 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 $"\t\t\t Lend Date: {lendItem.LendDate}, Expected Return Date: {lendItem.ExpectedReturnDate}",
                 $"\t\t\t Affiliated Contract Number: {lendItem.AffiliatedContractNumber}, Duration: {lendItem.ExpectedReturnDate.Subtract(lendItem.LendDate).Days} days",
             };
-            lendItem.Item = item;
-            lendItem.BorrowedBy = borrowedBy;
-            lendItem.BorrowedById = borrowedById;
-            lendItem.LendBy = lendBy;
-            lendItem.LendById = lendById;
-            lendItem.LendDate = lendDate;
-            if (duration > 0)
-            {
-                lendItem.ExpectedReturnDate = lendDate.AddDays(duration);
-            }
-            else
-            {
-                lendItem.ExpectedReturnDate = lendDate.AddDays(item.StandardLendDuration);
-            }
-            lendItem.AffiliatedContractNumber = affiliatedContractNumber;
-            _context.SaveChanges();
-            string[] newValues = new string[]
-            {   $"\t\t\t |||||||||||||||||||||||||||||",
+                    lendItem.Item = item;
+                    lendItem.BorrowedBy = borrowedBy;
+                    lendItem.BorrowedById = borrowedById;
+                    lendItem.LendBy = lendBy;
+                    lendItem.LendById = lendById;
+                    lendItem.LendDate = lendDate;
+                    if (duration > 0)
+                    {
+                        lendItem.ExpectedReturnDate = lendDate.AddDays(duration);
+                    }
+                    else
+                    {
+                        lendItem.ExpectedReturnDate = lendDate.AddDays(item.StandardLendDuration);
+                    }
+                    lendItem.AffiliatedContractNumber = affiliatedContractNumber;
+                    _context.SaveChanges();
+                    string[] newValues = new string[]
+                    {   $"\t\t\t |||||||||||||||||||||||||||||",
                 $"\t\t\t vvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
                 $"New values:",
                 $"\t\t\t Item ID: {lendItem.ItemId}, Borrowed By: {lendItem.BorrowedBy.FullName}, Lend By: {lendItem.LendBy.FullName}",
                 $"\t\t\t Lend Date: {lendItem.LendDate}, Expected Return Date: {lendItem.ExpectedReturnDate}",
                 $"\t\t\t Affiliated Contract Number: {lendItem.AffiliatedContractNumber}, Duration: {lendItem.ExpectedReturnDate.Subtract(lendItem.LendDate).Days} days",
-            };
-            toLog.AddRange(newValues);
-            IEnumerable<string> logStrings = toLog;
-            File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logStrings);
+                    };
+                    toLog.AddRange(newValues);
+                    IEnumerable<string> logStrings = toLog;
+                    File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logStrings);
+                    break;
+            }
         }
 
         public bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, int duration)
@@ -80,9 +88,9 @@ namespace Digitale_Geraeteliste.Data.Repositories
             return _context.LendItems;
         }
 
-        public IEnumerable<LendItem> GetOpenLendByItemId(int itemId)
+        public LendItem? GetOpenLendByItemId(int itemId)
         {
-            return _context.LendItems.Include(l => l.BorrowedBy).Include(l => l.LendBy).Include(l => l.Item).Where(l => l.ItemId == itemId && l.IsActive);
+            return _context.LendItems.FirstOrDefault(l => l.ItemId == itemId && l.IsActive);
         }
 
         public IEnumerable<LendItem> GetAllOverdueLendItems()
