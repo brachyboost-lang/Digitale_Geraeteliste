@@ -29,17 +29,20 @@ und Leitfragen. Lösungen stehen hier bewusst nicht.
 | Logging: Ordner beim Start, Dateiname beim Schreiben, `InnerException` | erledigt |
 | `ChangeLendItem`: erst speichern, dann loggen | erledigt |
 | `Include` nur noch auf Navigationseigenschaften, `Find` für einzelne Entitäten ohne Verweise | erledigt |
-| `ChangeLendItem` lädt `BorrowedBy` und `LendBy` mit | erledigt im Code, **zur Laufzeit noch nicht geprüft** (zweiter Programmstart) |
+| Zweiter Programmstart: Import wird übersprungen, keine Duplikate | **geprüft**, drei Einträge "already contains data" im Log |
+| `ChangeLendItem` lädt `BorrowedBy` und `LendBy` mit | erledigt im Code, **Änderungsweg zur Laufzeit noch nicht getestet** (Test lief gegen die zurückgegebene Ausleihe 1) |
+| `ChangeLendItem` bei zurückgegebener Ausleihe | loggt jetzt nur noch und kehrt still zurück, der Aufrufer erfährt nichts, noch nicht gebaut und ausgeführt |
 | `GetLendItemById` mit `Include` für Gerät und beide Mitarbeiter | erledigt |
 | `ChangeLendItem`: neue `ItemId` im Log | erledigt, Text wird jetzt nach `SaveChanges` gebaut |
 | `ChangeLendItem` ohne eigenes Anlegen des `Logs`-Ordners | funktioniert nur, weil der Import vorher lief, versteckte Abhängigkeit |
-| "Nicht gefunden" einheitlich als `ArgumentException` | erledigt in allen Such-Methoden, **Ausnahme:** `ReturnLendItem` tut bei unbekannter Id still nichts |
+| "Nicht gefunden" einheitlich als `ArgumentException` | erledigt, aber zweiter Parameter in `EmployeeRepository` falsch belegt, `ReturnLendItem` tut still nichts |
 | `GetAllOverdueLendItems` mit `Include` | erledigt, filtert weiterhin im Arbeitsspeicher (1.3) |
 | `GetAllLendItems` | gibt das `DbSet` ohne `Include` und ohne `ToList` zurück |
-| `GetOpenLendByItemId` für R1 | umgesetzt, gibt eine Menge statt höchstens eines Elements zurück und wird nicht ausgeführt (1.2, 1.3) |
+| `GetOpenLendByItemId` für R1 mit `FirstOrDefault` und `LendItem?` | erledigt |
 
-**Nächster Arbeitsschritt:** Den Laufzeittest mit zweitem Programmstart nachholen. Dann `GetOpenLendByItemId`
-und `ReturnLendItem` nachziehen. Damit ist die Datenschicht fertig, und Phase 3 mit dem `LendService` beginnt.
+**Nächster Arbeitsschritt:** Neu bauen und `ChangeLendItem` gegen eine **offene** Ausleihe testen, etwa Id 31.
+Dann `ChangeLendItem` bei zurückgegebenen Ausleihen und `ReturnLendItem` auf eine einheitliche Fehlerbehandlung
+bringen. Damit ist die Datenschicht fertig, und Phase 3 mit dem `LendService` beginnt.
 
 ---
 

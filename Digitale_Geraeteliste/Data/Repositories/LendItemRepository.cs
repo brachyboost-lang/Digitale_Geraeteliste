@@ -18,7 +18,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             _context = context;
         }
-        public void ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber)
+        public bool ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber)
         {
             LendItem lendItem = _context.LendItems.Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == lendItemId) ?? throw new ArgumentException("Lend item not found", nameof(lendItemId));
             switch (lendItem.IsActive)
@@ -26,7 +26,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 case false when lendItem.IsActive == false:
                     string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Cannot change a lend item that is returned.";
                     File.AppendAllText(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logMessage);
-                    break;
+                    return false;
                 default:
 
                     Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
@@ -68,7 +68,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
                     toLog.AddRange(newValues);
                     IEnumerable<string> logStrings = toLog;
                     File.AppendAllLines(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logStrings);
-                    break;
+                    return true;
             }
         }
 
@@ -111,14 +111,16 @@ namespace Digitale_Geraeteliste.Data.Repositories
             return _context.LendItems.Include(l => l.Item).Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == id) ?? throw new ArgumentException("Lend item not found", nameof(id));
         }
 
-        public void ReturnLendItem(int lendItemId, DateTime returnDate)
+        public bool ReturnLendItem(int lendItemId, DateTime returnDate)
         {
             LendItem? lendItem = _context.LendItems.Find(lendItemId);
             if (lendItem != null)
             {
                 lendItem.ReturnItem(returnDate);
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
         public bool ImportAllCSVData()
