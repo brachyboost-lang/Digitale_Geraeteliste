@@ -98,15 +98,24 @@ namespace Digitale_Geraeteliste.Data.Repositories
                     if (line != null)
                     {
                         var values = line.Split(';');
+                        var id = int.Parse(values[0]);
                         var itemId = int.Parse(values[1]);
-                        var employeeId = int.Parse(values[2]);
+                        var borrowedById = int.Parse(values[2]);
                         var item = items.FirstOrDefault(i => i.Id == itemId) ?? throw new InvalidOperationException($"Item with ID {itemId} not found");
-                        var employee = employees.FirstOrDefault(e => e.Id == employeeId) ?? throw new InvalidOperationException($"Employee with ID {employeeId} not found");
+                        var borrowedBy = employees.FirstOrDefault(e => e.Id == borrowedById) ?? throw new InvalidOperationException($"Employee with ID {borrowedById} not found");
+                        var lendById = int.Parse(values[3]);
+                        var lendBy = employees.FirstOrDefault(e => e.Id == lendById) ?? throw new InvalidOperationException($"Employee with ID {lendById} not found");
+                        var lendDate = DateTime.Parse(values[4]);
+                        var affiliatedContractNumber = values[8];
                         var lendItem = new LendItem(
+                            lendDate : lendDate,
+                            borrowedBy: borrowedBy,
                             item: item,
-                            borrowedBy: employee,
-                            lendDate: DateTime.Parse(values[3]),
-                            returnDate: string.IsNullOrEmpty(values[4]) ? null : DateTime.Parse(values[4])
+                            lendBy: lendBy,
+                            affiliatedContractNumber: affiliatedContractNumber,
+                            actualReturnDate: string.IsNullOrEmpty(values[6]) ? null : DateTime.Parse(values[6]),
+                            isActive: bool.Parse(values[7]),
+                            expectedReturnDate: DateTime.Parse(values[5])
                         );
                         lendItem.Id = int.Parse(values[0]);
                         lendItems.Add(lendItem);
