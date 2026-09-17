@@ -41,7 +41,12 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public void ReturnLendItem(int lendItemId, DateTime returnDate)
         {
-            throw new NotImplementedException();
+            LendItem? lendItem = _context.LendItems.Find(lendItemId);
+            if (lendItem != null)
+            {
+                lendItem.ReturnItem(returnDate);
+                _context.SaveChanges();
+            }
         }
 
         public bool ImportAllCSVData()
@@ -51,10 +56,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
                 Console.WriteLine("Database already contains data. Skipping CSV import.");
                 return false;
             }
-            var employeePath = "path/to/employees.csv";
-            var categoryPath = "path/to/categories.csv";
-            var itemPath = "path/to/items.csv";
-            var lendItemPath = @"G:\C# Projects\IHK Probeprojekt\Digitale_Geraeteliste\Data\Testdata\ausleihen.csv";
+            var employeePath = Path.Combine(AppContext.BaseDirectory, "Data", "Testdata", "mitarbeiter.csv");
+            var categoryPath = Path.Combine(AppContext.BaseDirectory, "Data", "Testdata", "kategorien.csv");
+            var itemPath = Path.Combine(AppContext.BaseDirectory, "Data", "Testdata", "geraete.csv");
+            var lendItemPath = Path.Combine(AppContext.BaseDirectory, "Data", "Testdata", "ausleihen.csv");
             try
             {
                 var employees = CSVImporter.GetEmployeesFromCSV(employeePath);
