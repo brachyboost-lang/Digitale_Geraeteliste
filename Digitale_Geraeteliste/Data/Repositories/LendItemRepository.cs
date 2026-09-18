@@ -122,7 +122,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             }
             return false;
         }
-
+         
         public bool ImportAllCSVData()
         {
             if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "Logs")))
