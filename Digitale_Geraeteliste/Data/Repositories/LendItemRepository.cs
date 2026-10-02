@@ -74,7 +74,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, int duration)
         {
-            Item item = _context.Items.Find(itemId) ?? throw new ArgumentException("Item not found", nameof(itemId));
+            Item item = _context.Items.Find(itemId);
             Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
             Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
             LendItem lendItem = new LendItem(lendDate, borrowedBy, item, lendBy, affiliatedContractNumber, duration);
@@ -106,9 +106,9 @@ namespace Digitale_Geraeteliste.Data.Repositories
             return overdueLendItems;
         }
 
-        public LendItem GetLendItemById(int id)
+        public LendItem? GetLendItemById(int id)
         {
-            return _context.LendItems.Include(l => l.Item).Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == id) ?? throw new ArgumentException("Lend item not found", nameof(id));
+            return _context.LendItems.Include(l => l.Item).Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == id);
         }
 
         public bool ReturnLendItem(int lendItemId, DateTime returnDate)
