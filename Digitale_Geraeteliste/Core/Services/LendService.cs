@@ -52,6 +52,10 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Return date cannot be before the lend date.");
             }
+            if (item.ActualReturnDate.HasValue)
+            {
+                return TransactionResult.Failure("Item has already been returned.");
+            }
             _lendItemRepository.ReturnLendItem(lendItemId, returnDate);
             return TransactionResult.Success();
         }
