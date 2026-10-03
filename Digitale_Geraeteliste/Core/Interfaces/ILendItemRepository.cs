@@ -8,10 +8,10 @@ namespace Digitale_Geraeteliste.Core.Interfaces
 {
     public interface ILendItemRepository
     {
-        bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, int duration);
+        bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, DateTime? expectedReturnDate);
         LendItem? GetLendItemById(int id);
         IEnumerable<LendItem> GetAllLendItems();
-        bool ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber);
+        bool ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, DateTime? expectedReturnDate, string affiliatedContractNumber);
         bool ReturnLendItem(int lendItemId, DateTime returnDate);
         IEnumerable<LendItem> GetAllOverdueLendItems();
         LendItem? GetOpenLendByItemId(int itemId);

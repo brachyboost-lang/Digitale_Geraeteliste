@@ -11,21 +11,23 @@ namespace Digitale_Geraeteliste.Core.Services
     {
         private readonly IItemRepository _itemRepository;
         private readonly ILendItemRepository _lendItemRepository;
-        public LendService(IItemRepository itemRepository, ILendItemRepository lendItemRepository)
+        private readonly IEmployeeRepository _employeeRepository;
+        public LendService(IItemRepository itemRepository, ILendItemRepository lendItemRepository, IEmployeeRepository employeeRepository)
         {
             _itemRepository = itemRepository;
             _lendItemRepository = lendItemRepository;
+            _employeeRepository = employeeRepository;
         }
-        public TransactionResult BorrowItem(int itemId, int borrowedById, int lendById, DateTime lendDate, int duration, string affiliatedContractNumber)
+        public TransactionResult BorrowItem(int itemId, int borrowedById, int lendById, DateTime lendDate, DateTime? expectedReturnDate, string affiliatedContractNumber)
         {
             var item = _itemRepository.GetItemById(itemId);
             if (item == null)
             {
                 return TransactionResult.Failure("Item not found.");
             }
-            if (duration < 0)
+            if (expectedReturnDate.HasValue && expectedReturnDate.Value.Date < lendDate.Date)
             {
-                return TransactionResult.Failure("Invalid duration.");
+                return TransactionResult.Failure("Invalid return date.");
             }
             if (item.IsRetired)
             {
@@ -36,7 +38,9 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Item is already borrowed.");
             }
-
+            Employee lendBy = _employeeRepository.GetEmployeeByID(lendById);
+            Employee borrowedBy = _employeeRepository.GetEmployeeByID(borrowedById);
+            LendItem newLend = new LendItem(lendDate, borrowedBy, item, lendBy, affiliatedContractNumber, expectedReturnDate);
 
             return TransactionResult.Success();
         }
@@ -47,6 +51,11 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Item not found.");
             }
+            if (returnDate.Date < item.LendDate.Date)
+            {
+                return TransactionResult.Failure("Return date cannot be before the lend date.");
+            }
+            item.ReturnItem(returnDate);
             return TransactionResult.Success();
         }
     }
