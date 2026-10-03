@@ -32,6 +32,14 @@ namespace Digitale_Geraeteliste.Core.Model
             NeedsMaintenance = needsMaintenance;
         }
 
+        public enum ItemStatus
+        {
+            Available,
+            LentOut,
+            Retired,
+            Maintenance
+        }
+
         private Item() { }
     }
 }

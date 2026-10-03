@@ -1,0 +1,20 @@
+﻿using Digitale_Geraeteliste.Core.Model;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Digitale_Geraeteliste.Core.Services
+{
+    public class InventoryOverviewRow
+    {
+        public int ItemId { get; set; }
+        public int? LendItemID { get; set; }
+        public string InventoryNumber { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public int? LendByEmployeeId { get; set; }
+        public int? BorrowedByEmployeeId { get; set; }
+        public DateTime ExpectedReturnDate { get; set; }
+        public string Status { get; set; } = string.Empty;
+
+    }
+}

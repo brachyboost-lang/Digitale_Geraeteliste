@@ -15,6 +15,30 @@ namespace Digitale_Geraeteliste.Core.Services
             _itemRepository = itemRepository;
             _lendItemRepository = lendItemRepository;
         }
+        public IEnumerable<InventoryOverviewRow> GetInventoryOverview(DateTime dateToCheck)
+        {
+            Dictionary<int, LendItem> openLends = _lendItemRepository.GetAllLendItems()
+                   .Where(l => l.ActualReturnDate == null)
+                   .GroupBy(l => l.ItemId)
+                   .ToDictionary(g => g.Key, g => g.First());
+            List<InventoryOverviewRow> overviewRows = new List<InventoryOverviewRow>();
+            foreach (var item in _itemRepository.GetAllItems())
+            {
+                openLends.TryGetValue(item.Id, out LendItem? lendItem);
+                overviewRows.Add(new InventoryOverviewRow
+                {
+                    ItemId = item.Id,
+                    LendItemID = lendItem?.Id,
+                    InventoryNumber = item.InventoryNumber,
+                    Name = item.Name,
+                    LendByEmployeeId = lendItem?.LendById,
+                    BorrowedByEmployeeId = lendItem?.BorrowedById,
+                    ExpectedReturnDate = lendItem?.ExpectedReturnDate ?? DateTime.MinValue,
+                    Status = item.IsRetired ? "Retired" : (lendItem != null ? (lendItem.IsOverdueAt(dateToCheck) ? "Overdue" : "Lent Out") : "Available")
+                });
+            }
+            return overviewRows;
+        }
         public TransactionResult BorrowItem(int itemId, int borrowedById, int lendById, DateTime lendDate, DateTime? expectedReturnDate, string affiliatedContractNumber)
         {
             var item = _itemRepository.GetItemById(itemId);
