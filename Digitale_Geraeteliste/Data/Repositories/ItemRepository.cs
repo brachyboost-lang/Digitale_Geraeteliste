@@ -17,18 +17,22 @@ namespace Digitale_Geraeteliste.Data.Repositories
             _context = context;
         }
         
-        public Item GetItemById(int id)
+        public Item? GetItemById(int id)
         {
-            Item itemById = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == id) ?? throw new ArgumentException("Item not found", nameof(id));
+            Item? itemById = _context.Items.Include(i => i.Category).FirstOrDefault(i => i.Id == id);
             return itemById;
         }
         public IEnumerable<Item> GetAllItems()
         {
             return _context.Items.Include(i => i.Category).ToList();
         }
-        public void ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isRetired, bool needsMaintenance)
+        public bool ChangeItem(Item item, string inventoryNumber, string name, Category category, string description, int standardLendDuration, bool isRetired, bool needsMaintenance)
         {
-            Item itemToChange = GetItemById(item.Id);
+            Item? itemToChange = GetItemById(item.Id);
+            if (itemToChange == null)
+            {
+                return false;
+            }
             itemToChange.InventoryNumber = inventoryNumber;
             itemToChange.Name = name;
             itemToChange.Category = category;
@@ -45,6 +49,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
             {
                 throw new Exception("An error occurred while updating the Database. Contact your system administrator.", ex);
             }
+            return true;
         }
         public bool CheckInventoryNumberDuplicate(string inventoryNumber, int itemId)
         {

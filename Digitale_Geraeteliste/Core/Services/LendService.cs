@@ -38,8 +38,6 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Item is already borrowed.");
             }
-            Employee lendBy = _employeeRepository.GetEmployeeByID(lendById);
-            Employee borrowedBy = _employeeRepository.GetEmployeeByID(borrowedById);
             _lendItemRepository.CreateNewLendItem(itemId, borrowedById, lendById, lendDate, affiliatedContractNumber, expectedReturnDate);
             return TransactionResult.Success();
         }

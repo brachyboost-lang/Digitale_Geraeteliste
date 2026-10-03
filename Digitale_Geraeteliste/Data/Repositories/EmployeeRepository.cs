@@ -34,9 +34,9 @@ namespace Digitale_Geraeteliste.Data.Repositories
             return true;
         }
 
-        public Employee GetEmployeeByID(int id)
+        public Employee? GetEmployeeByID(int id)
         {
-            return _context.Employees.Find(id) ?? throw new ArgumentException("Employee not found", nameof(id));
+            return _context.Employees.Find(id);
         }
     }
 }
