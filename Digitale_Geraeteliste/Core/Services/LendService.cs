@@ -35,7 +35,11 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Item is already borrowed.");
             }
-            _lendItemRepository.CreateNewLendItem(itemId, borrowedById, lendById, lendDate, affiliatedContractNumber, expectedReturnDate);
+            bool success = _lendItemRepository.CreateNewLendItem(itemId, borrowedById, lendById, lendDate, affiliatedContractNumber, expectedReturnDate);
+            if (!success)
+            {
+                return TransactionResult.Failure("Failed to create new lend item.");
+            }
             return TransactionResult.Success();
         }
         public TransactionResult ReturnItem(int lendItemId, DateTime returnDate)
@@ -53,7 +57,11 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Item has already been returned.");
             }
-            _lendItemRepository.ReturnLendItem(lendItemId, returnDate);
+            bool success = _lendItemRepository.ReturnLendItem(lendItemId, returnDate);
+            if (!success)
+            {
+                return TransactionResult.Failure("Failed to return lend item.");
+            }
             return TransactionResult.Success();
         }
     }

@@ -80,7 +80,13 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public bool CreateNewLendItem(int itemId, int borrowedById, int lendById, DateTime lendDate, string affiliatedContractNumber, DateTime? expectedReturnDate)
         {
-            Item item = _context.Items.Find(itemId);
+            Item? item = _context.Items.Find(itemId);
+            if (item == null)
+            {
+                string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Item with ID {itemId} not found.";
+                File.AppendAllText(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logMessage);
+                return false;
+            }
             Employee lendBy = _context.Employees.Find(lendById) ?? throw new ArgumentException("Employee not found", nameof(lendById));
             Employee borrowedBy = _context.Employees.Find(borrowedById) ?? throw new ArgumentException("Employee not found", nameof(borrowedById));
             LendItem lendItem = new LendItem(lendDate, borrowedBy, item, lendBy, affiliatedContractNumber, expectedReturnDate);
