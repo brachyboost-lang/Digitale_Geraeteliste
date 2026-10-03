@@ -13,8 +13,9 @@ namespace Digitale_Geraeteliste.Core.Services
         public string Name { get; set; } = string.Empty;
         public int? LendByEmployeeId { get; set; }
         public int? BorrowedByEmployeeId { get; set; }
-        public DateTime ExpectedReturnDate { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public DateTime? ExpectedReturnDate { get; set; }
+        public string? CategoryName { get; set; }
+        public ItemStatus Status { get; set; }
 
     }
 }

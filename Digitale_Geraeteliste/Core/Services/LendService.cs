@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Digitale_Geraeteliste.Core.Interfaces;
 using Digitale_Geraeteliste.Core.Model;
+using Microsoft.VisualBasic;
 
 namespace Digitale_Geraeteliste.Core.Services
 {
@@ -33,11 +35,24 @@ namespace Digitale_Geraeteliste.Core.Services
                     Name = item.Name,
                     LendByEmployeeId = lendItem?.LendById,
                     BorrowedByEmployeeId = lendItem?.BorrowedById,
-                    ExpectedReturnDate = lendItem?.ExpectedReturnDate ?? DateTime.MinValue,
-                    Status = item.IsRetired ? "Retired" : (lendItem != null ? (lendItem.IsOverdueAt(dateToCheck) ? "Overdue" : "Lent Out") : "Available")
+                    ExpectedReturnDate = lendItem?.ExpectedReturnDate,
+                    Status = DetermineItemStatus(item, lendItem, dateToCheck),
+                    CategoryName = item.Category.Name,
                 });
             }
             return overviewRows;
+        }
+        private static ItemStatus DetermineItemStatus(Item item, LendItem? openLend, DateTime dateToCheck)
+        {
+            if (item.IsRetired)
+            {
+                return ItemStatus.Retired;
+            }
+            if (openLend == null)
+            {
+                return ItemStatus.Available;
+            }
+            return openLend.IsOverdueAt(dateToCheck) ? ItemStatus.Overdue : ItemStatus.LentOut;
         }
         public TransactionResult BorrowItem(int itemId, int borrowedById, int lendById, DateTime lendDate, DateTime? expectedReturnDate, string affiliatedContractNumber)
         {
