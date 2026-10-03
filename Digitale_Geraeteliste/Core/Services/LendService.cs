@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Digitale_Geraeteliste.Core.Interfaces;
-using Digitale_Geraeteliste.Data.Repositories;
 using Digitale_Geraeteliste.Core.Model;
 
 namespace Digitale_Geraeteliste.Core.Services
@@ -11,12 +10,10 @@ namespace Digitale_Geraeteliste.Core.Services
     {
         private readonly IItemRepository _itemRepository;
         private readonly ILendItemRepository _lendItemRepository;
-        private readonly IEmployeeRepository _employeeRepository;
         public LendService(IItemRepository itemRepository, ILendItemRepository lendItemRepository, IEmployeeRepository employeeRepository)
         {
             _itemRepository = itemRepository;
             _lendItemRepository = lendItemRepository;
-            _employeeRepository = employeeRepository;
         }
         public TransactionResult BorrowItem(int itemId, int borrowedById, int lendById, DateTime lendDate, DateTime? expectedReturnDate, string affiliatedContractNumber)
         {
