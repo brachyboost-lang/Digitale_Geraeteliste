@@ -40,8 +40,7 @@ namespace Digitale_Geraeteliste.Core.Services
             }
             Employee lendBy = _employeeRepository.GetEmployeeByID(lendById);
             Employee borrowedBy = _employeeRepository.GetEmployeeByID(borrowedById);
-            LendItem newLend = new LendItem(lendDate, borrowedBy, item, lendBy, affiliatedContractNumber, expectedReturnDate);
-
+            _lendItemRepository.CreateNewLendItem(itemId, borrowedById, lendById, lendDate, affiliatedContractNumber, expectedReturnDate);
             return TransactionResult.Success();
         }
         public TransactionResult ReturnItem(int lendItemId, DateTime returnDate)
@@ -55,7 +54,7 @@ namespace Digitale_Geraeteliste.Core.Services
             {
                 return TransactionResult.Failure("Return date cannot be before the lend date.");
             }
-            item.ReturnItem(returnDate);
+            _lendItemRepository.ReturnLendItem(lendItemId, returnDate);
             return TransactionResult.Success();
         }
     }

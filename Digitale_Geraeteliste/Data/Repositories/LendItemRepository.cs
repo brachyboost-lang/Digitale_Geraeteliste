@@ -21,6 +21,12 @@ namespace Digitale_Geraeteliste.Data.Repositories
         public bool ChangeLendItem(int lendItemId, int itemId, int borrowedById, int lendById, DateTime lendDate, DateTime? expectedReturnDate, string affiliatedContractNumber)
         {
             LendItem? lendItem = _context.LendItems.Include(l => l.BorrowedBy).Include(l => l.LendBy).FirstOrDefault(l => l.Id == lendItemId);
+            if (lendItem == null)
+            {
+                string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] - Lend item with ID {lendItemId} not found.";
+                File.AppendAllText(Path.Combine(_logPath, $"log{DateTime.Now:yyyyMMdd}.txt"), logMessage);
+                return false;
+            }
             switch (lendItem.IsActive)
             {
                 case false when lendItem.IsActive == false:
