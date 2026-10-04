@@ -97,7 +97,7 @@ namespace Digitale_Geraeteliste.Data.Repositories
 
         public IEnumerable<LendItem> GetAllLendItems()
         {
-            return _context.LendItems;
+            return _context.LendItems.Include(l => l.Item).Include(l => l.BorrowedBy).Include(l => l.LendBy);
         }
 
         public LendItem? GetOpenLendByItemId(int itemId)
