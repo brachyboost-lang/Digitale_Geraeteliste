@@ -6,7 +6,47 @@
         xmlns:local="clr-namespace:Digitale_Geraeteliste"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1640">
-    <Grid>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="1"
+              ItemsSource="{Binding Rows}"
+              SelectedItem="{Binding SelectedRow}"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Inventarnr." Binding="{Binding InventoryNumber}" />
+                <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Kategorie" Binding="{Binding CategoryName}" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                <DataGridTextColumn Header="Rückgabe bis" Binding="{Binding ExpectedReturnDate, StringFormat=dd.MM.yyyy}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Column="2" Grid.Row="1" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Column="1" Grid.Row="1" Margin="10,0,0,0">
+                <TextBlock Text="{Binding SelectedRow.InventoryNumber}" FontSize="16" FontWeight="Bold" />
+                <TextBlock Text="{Binding SelectedRow.Name}" FontSize="14" />
+                <TextBlock Text="{Binding SelectedRow.CategoryName}" FontSize="14" />
+                <TextBlock Text="{Binding SelectedRow.Status}" FontSize="14" />
+                <TextBlock Text="{Binding SelectedRow.ExpectedReturnDate, StringFormat=Rückgabe bis: dd.MM.yyyy}" FontSize="14" />
+                <Button Content="Details anzeigen" Command="{Binding ShowDetailsCommand}" Grid.Column ="1" Grid.Row="1" Margin="10,0,0,0" />
+            <Button Content="Neuer Verleih" Command="{Binding ShowDetailsCommand}" Grid.Column="1" Grid.Row="2" Margin="10,0,0,0" />
+            <Button Content="Rückgabe" Command="{Binding ShowDetailsCommand}" Grid.Column="1" Grid.Row="3" Margin="10,0,0,0" />
+            <Button Content="Offene Verleihe anzeigen" Command="{Binding ShowDetailsCommand}" Grid.Column="1" Grid.Row="4" Margin="10,0,0,0" />
+            <Button Content="Überfällige Verleihe anzeigen" Command="{Binding ShowDetailsCommand}" Grid.Column="1" Grid.Row="5" Margin="10,0,0,0" />
 
+        </Grid>
     </Grid>
 </Window>
