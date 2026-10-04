@@ -9,17 +9,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Digitale_Geraeteliste.ViewModels;
 
 namespace Digitale_Geraeteliste.Views
 {
-    /// <summary>
-    /// Interaction logic for CreateNewLendWindow.xaml
-    /// </summary>
-    public partial class CreateNewLendWindow : Window
+    public partial class NewLendDialog : Window
     {
-        public CreateNewLendWindow()
+        public NewLendDialog(NewLendDialogViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
+            viewModel.CloseRequested += result => DialogResult = result;
         }
     }
 }

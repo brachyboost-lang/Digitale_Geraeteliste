@@ -1,0 +1,37 @@
+﻿<Window x:Class="Digitale_Geraeteliste.Views.NewLendDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Digitale_Geraeteliste.Views"
+        mc:Ignorable="d"
+        Title="NewLendDialog" Height="450" Width="800">
+    <Grid>
+        <StackPanel Margin="15" Width="320">
+            <TextBlock Text="Gerät" FontWeight="Bold" />
+            <TextBlock Text="{Binding ItemDisplay}" Margin="0,0,0,10" />
+
+            <TextBlock Text="Entleiher" />
+            <ComboBox ItemsSource="{Binding Employees}" DisplayMemberPath="FullName"
+              SelectedItem="{Binding SelectedBorrower}" IsEditable="True" Margin="0,0,0,10" />
+
+            <TextBlock Text="Ausgegeben von" />
+            <ComboBox ItemsSource="{Binding Employees}" DisplayMemberPath="FullName"
+              SelectedItem="{Binding SelectedLender}" IsEditable="True" Margin="0,0,0,10" />
+
+            <TextBlock Text="Ausgabedatum" />
+            <DatePicker SelectedDate="{Binding LendDate}" Margin="0,0,0,10" />
+
+            <TextBlock Text="Rückgabe bis (leer = Standard-Leihdauer)" />
+            <DatePicker SelectedDate="{Binding ExpectedReturnDate}" Margin="0,0,0,10" />
+
+            <TextBlock Text="Bauvorhaben / Vertrag" />
+            <TextBox Text="{Binding ContractNumber}" Margin="0,0,0,15" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Verleihen" Command="{Binding ConfirmCommand}" IsDefault="True" Padding="10,4" Margin="0,0,8,0" />
+                <Button Content="Abbrechen" IsCancel="True" Padding="10,4" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

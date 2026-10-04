@@ -14,6 +14,10 @@ namespace Digitale_Geraeteliste.Data.Repositories
         {
             _context = context;
         }
+        public List<Employee> GetAllEmployees()
+        {
+            return _context.Employees.ToList();
+        }
         public bool ChangeEmployee(Employee employee, string firstName, string lastName, string department)
         {
             int changes = 0;
