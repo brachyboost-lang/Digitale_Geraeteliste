@@ -25,5 +25,6 @@ namespace Digitale_Geraeteliste.ViewModels
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
+        
     }
 }

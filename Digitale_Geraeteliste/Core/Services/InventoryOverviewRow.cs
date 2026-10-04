@@ -11,11 +11,12 @@ namespace Digitale_Geraeteliste.Core.Services
         public int? LendItemID { get; set; }
         public string InventoryNumber { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public int? LendByEmployeeId { get; set; }
-        public int? BorrowedByEmployeeId { get; set; }
+        public string? LendByEmployeeName { get; set; }
+        public string? BorrowedByEmployeeName { get; set; }
         public DateTime? ExpectedReturnDate { get; set; }
         public string? CategoryName { get; set; }
         public ItemStatus Status { get; set; }
+        public string TableName { get; set; } = string.Empty;
 
     }
 }
