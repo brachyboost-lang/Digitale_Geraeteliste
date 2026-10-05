@@ -1,11 +1,14 @@
 ﻿using Digitale_Geraeteliste.Core.Interfaces;
-using Digitale_Geraeteliste.Core.Services;
 using Digitale_Geraeteliste.Core.Model;
+using Digitale_Geraeteliste.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
+using Digitale_Geraeteliste.Views;
 
 namespace Digitale_Geraeteliste.ViewModels
 {
@@ -13,6 +16,7 @@ namespace Digitale_Geraeteliste.ViewModels
     {
         private readonly ILendService _lendService;
         private InventoryOverviewRow? _selectedRow;
+        public RelayCommand LendCommand { get; }
 
         public ObservableCollection<InventoryOverviewRow> Rows { get; } = new ObservableCollection<InventoryOverviewRow>();
 
@@ -31,19 +35,10 @@ namespace Digitale_Geraeteliste.ViewModels
         {
             _lendService = lendService;
             ReturnCommand = new RelayCommand(_ => ReturnSelected(), _ => SelectedRow?.LendItemID != null);
+            LendCommand = new RelayCommand(_ => OpenLendDialog(), _ => SelectedRow?.Status == ItemStatus.Available);
             Refresh();
         }
-        LendCommand = new RelayCommand(_ => OpenLendDialog(), _ => SelectedRow?.Status == ItemStatus.Available);
 
-        private void OpenLendDialog()
-        {
-            var dialogViewModel = new LendDialogViewModel(_lendService, SelectedRow!, _lendService.GetEmployees());
-            var dialog = new LendDialog(dialogViewModel) { Owner = Application.Current.MainWindow };
-            if (dialog.ShowDialog() == true)
-            {
-                Refresh();
-            }
-        }
         private void ReturnSelected()
         {
             MessageBox.Show("Möchten Sie den ausgewählten Artikel zurückgeben?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -66,6 +61,15 @@ namespace Digitale_Geraeteliste.ViewModels
             foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
             {
                 Rows.Add(row);
+            }
+        }
+        private void OpenLendDialog()
+        {
+            var dialogViewModel = new NewLendDialogViewModel(_lendService, SelectedRow!, _lendService.GetAllEmployees());
+            var dialog = new NewLendDialog(dialogViewModel) { Owner = Application.Current.MainWindow };
+            if (dialog.ShowDialog() == true)
+            {
+                Refresh();
             }
         }
     }

@@ -17,6 +17,8 @@ namespace Digitale_Geraeteliste.Core.Services
         public string? CategoryName { get; set; }
         public ItemStatus Status { get; set; }
         public string TableName { get; set; } = string.Empty;
+        public List<Employee> StorageEmployees { get; set; } = new List<Employee>();
+        public List<Employee> BorrowingEmployees { get; set; } = new List<Employee>();
 
     }
 }

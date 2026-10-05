@@ -103,5 +103,10 @@ namespace Digitale_Geraeteliste.Core.Services
             }
             return TransactionResult.Success();
         }
+        public static void FillDepartmentEmployees(InventoryOverviewRow overviewRow, IEmployeeRepository employeeRepository)
+        {
+            overviewRow.StorageEmployees = employeeRepository.GetEmployeesByDepartment("Lager");
+            overviewRow.BorrowingEmployees = employeeRepository.GetAllEmployees();
+        }
     }
 }

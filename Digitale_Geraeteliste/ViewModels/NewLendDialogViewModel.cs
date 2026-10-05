@@ -14,7 +14,8 @@ namespace Digitale_Geraeteliste.ViewModels
         private readonly int _itemId;
 
         public string ItemDisplay { get; }
-        public IEnumerable<Employee> Employees { get; }
+        public IEnumerable<Employee> StorageEmployees { get; }
+        public IEnumerable<Employee> BorrowingEmployees { get; }
         public Employee? SelectedBorrower { get; set; }
         public Employee? SelectedLender { get; set; }
         public DateTime? LendDate { get; set; } = DateTime.Today;
@@ -25,12 +26,13 @@ namespace Digitale_Geraeteliste.ViewModels
 
         public event Action<bool>? CloseRequested;
 
-        public NewLendDialogViewModel(ILendService lendService, InventoryOverviewRow row, IEnumerable<Employee> employees)
+        public NewLendDialogViewModel(ILendService lendService, InventoryOverviewRow row, IEnumerable<Employee> storageEmployees, IEnumerable<Employee> borrowingEmployees)
         {
             _lendService = lendService;
             _itemId = row.ItemId;
             ItemDisplay = $"{row.InventoryNumber} - {row.Name}";
-            Employees = employees;
+            StorageEmployees = storageEmployees;
+            BorrowingEmployees = borrowingEmployees;
             ConfirmCommand = new RelayCommand(_ => Confirm(), _ => SelectedBorrower != null && SelectedLender != null && LendDate != null);
         }
 

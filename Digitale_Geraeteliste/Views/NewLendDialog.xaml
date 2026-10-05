@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Digitale_Geraeteliste.Views"
         mc:Ignorable="d"
-        Title="NewLendDialog" Height="450" Width="800">
+        Title="Neuer Verleih" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Grid>
         <StackPanel Margin="15" Width="320">
             <TextBlock Text="Gerät" FontWeight="Bold" />
