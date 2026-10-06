@@ -1,13 +1,15 @@
 ﻿using Digitale_Geraeteliste.Core.Interfaces;
 using Digitale_Geraeteliste.Core.Model;
 using Digitale_Geraeteliste.Core.Services;
+using Digitale_Geraeteliste.Data.Repositories;
+using Digitale_Geraeteliste.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Digitale_Geraeteliste.Views;
 
 namespace Digitale_Geraeteliste.ViewModels
 {
@@ -157,6 +159,36 @@ namespace Digitale_Geraeteliste.ViewModels
         {
             SelectedStatus = null;
             TextBoxFilter = string.Empty;
+        }
+        public ICommand ExportOverdueLendsCommand => new RelayCommand(_ => ExportOverdueLends());
+
+        private void ExportOverdueLends()
+        {
+            DateTime today = DateTime.Today;
+            List<InventoryOverviewRow> overdue = _lendService.GetInventoryOverview(today).Where(r => r.Status == ItemStatus.Overdue).ToList();
+            if (overdue.Count == 0)
+            {
+                MessageBox.Show("Es gibt aktuell keine überfälligen Verleihe.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"Ueberfaellig_{today:yyyy-MM-dd}.csv",
+                Filter = "CSV-Datei (*.csv)|*.csv"
+            };
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+            try
+            {
+                int count = CSVExport.WriteOverdueList(overdue, dialog.FileName, today);
+                MessageBox.Show($"{count} überfällige Verleihe exportiert.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Die Datei konnte nicht geschrieben werden. Ist sie noch in Excel geöffnet?", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
