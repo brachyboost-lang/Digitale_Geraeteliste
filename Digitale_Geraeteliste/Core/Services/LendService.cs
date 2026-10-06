@@ -44,6 +44,7 @@ namespace Digitale_Geraeteliste.Core.Services
                     ExpectedReturnDate = lendItem?.ExpectedReturnDate,
                     Status = DetermineItemStatus(item, lendItem, dateToCheck),
                     CategoryName = item.Category.Name,
+                    LendDate = lendItem?.LendDate
                 });
             }
             return overviewRows;
