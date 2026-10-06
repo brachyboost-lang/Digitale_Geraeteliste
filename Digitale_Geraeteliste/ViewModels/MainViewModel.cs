@@ -53,17 +53,15 @@ namespace Digitale_Geraeteliste.ViewModels
                 }
             }
         }
+        private ItemStatus? _selectedStatus;
         public ItemStatus? SelectedStatus
         {
-            get => SelectedRow?.Status;
+            get => _selectedStatus;
             set
             {
-                if (SelectedRow != null && value.HasValue)
-                {
-                    SelectedRow.Status = value.Value;
-                    OnPropertyChanged(nameof(SelectedStatus));
-                    Refresh();
-                }
+                _selectedStatus = value;
+                OnPropertyChanged();
+                Refresh();
             }
         }
         private string _textBoxFilter = string.Empty;
