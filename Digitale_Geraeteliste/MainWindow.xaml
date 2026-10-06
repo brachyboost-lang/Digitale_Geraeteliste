@@ -16,6 +16,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Verleihübersicht" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding textBoxFilter, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,0,10" />
         <DataGrid Grid.Row="1" Grid.Column="0"
               ItemsSource="{Binding Rows}"
               SelectedItem="{Binding SelectedRow}"
@@ -27,6 +28,7 @@
                 <DataGridTextColumn Header="Entliehen von" Binding="{Binding LendByEmployeeName}" />
                 <DataGridTextColumn Header="Entliehen an" Binding="{Binding BorrowedByEmployeeName}" /> 
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                <DataGridTextColumn Header="Ausgabedatum" Binding="{Binding LendDate, StringFormat=dd.MM.yyyy}" />
                 <DataGridTextColumn Header="Rückgabe bis" Binding="{Binding ExpectedReturnDate, StringFormat=dd.MM.yyyy}" />
             </DataGrid.Columns>
         </DataGrid>

@@ -82,7 +82,10 @@ namespace Digitale_Geraeteliste.ViewModels
             {
                 foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
                 {
-                    if (row.InventoryNumber.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase))
+                    if (row.InventoryNumber.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase) || 
+                        (row.Status.ToString().Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.BorrowedByEmployeeName != null && row.BorrowedByEmployeeName.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase))
+                        || (row.LendByEmployeeName != null && row.LendByEmployeeName.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.CategoryName != null && row.CategoryName.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase))
+                            || (row.ExpectedReturnDate != null && row.ExpectedReturnDate.ToString().Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase)))
                     {
                         Rows.Add(row);
                     }
