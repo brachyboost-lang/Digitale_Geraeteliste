@@ -36,7 +36,7 @@
             <Button Content="Offene Verleihe anzeigen" Command="{Binding ShowOpenLendsCommand}" Margin="0,0,0,8" Padding="6" />
             <Button Content="Überfällige Verleihe anzeigen" Command="{Binding ShowOverdueLendsCommand}" Margin="0,0,0,8" Padding="6" />
             <Button Content="Überfällige Verleihe Exportieren" Command="{Binding ExportOverdueLendsCommand}" Margin="0,0,0,8" Padding="6" />
-            <Button Content="Filter zurücksetzten" Command="{Binding ShowAllItemsCommand}" Margin="0,0,0,35" Padding="1" />
+            <Button Content="Filter zurücksetzen" Command="{Binding ShowAllItemsCommand}" Margin="0,0,0,35" Padding="1" />
             <Button Content="Neuer Verleih" Command="{Binding LendCommand}" Margin="0,0,0,8" Padding="6" />
             <Button Content="Rückgabe" Command="{Binding ReturnCommand}" Margin="0,0,0,8" Padding="6" />
 
