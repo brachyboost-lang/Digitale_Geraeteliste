@@ -142,7 +142,7 @@ namespace Digitale_Geraeteliste.ViewModels
             }
         }
         public ICommand ShowOpenLendsCommand => new RelayCommand(_ => ShowOpenLends());
-        public ICommand ShowOverdueLendsCOmmand => new RelayCommand(_ => ShowOverdueLends());
+        public ICommand ShowOverdueLendsCommand => new RelayCommand(_ => ShowOverdueLends());
         public ICommand ShowAllItemsCommand => new RelayCommand(_ => ShowAllItems());
 
         private void ShowOpenLends()
