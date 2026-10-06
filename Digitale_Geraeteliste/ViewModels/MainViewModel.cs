@@ -65,7 +65,7 @@ namespace Digitale_Geraeteliste.ViewModels
             }
         }
         private string _textBoxFilter = string.Empty;
-        public string textBoxFilter
+        public string TextBoxFilter
         {
             get => _textBoxFilter;
             set
@@ -78,14 +78,14 @@ namespace Digitale_Geraeteliste.ViewModels
         public void Refresh()
         {
             Rows.Clear();
-            if (textBoxFilter != null && textBoxFilter.Length > 0 && textBoxFilter.Trim().Length > 0)
+            if (TextBoxFilter != null && TextBoxFilter.Length > 0 && TextBoxFilter.Trim().Length > 0)
             {
                 foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
                 {
-                    if (row.InventoryNumber.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase) || 
-                        (row.Status.ToString().Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.BorrowedByEmployeeName != null && row.BorrowedByEmployeeName.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase))
-                        || (row.LendByEmployeeName != null && row.LendByEmployeeName.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.CategoryName != null && row.CategoryName.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase))
-                            || (row.ExpectedReturnDate != null && row.ExpectedReturnDate.ToString().Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase)))
+                    if (row.InventoryNumber.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase) || 
+                        (row.Status.ToString().Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.BorrowedByEmployeeName != null && row.BorrowedByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
+                        || (row.LendByEmployeeName != null && row.LendByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.CategoryName != null && row.CategoryName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
+                            || (row.ExpectedReturnDate != null && row.ExpectedReturnDate.ToString().Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)))
                     {
                         Rows.Add(row);
                     }
@@ -108,7 +108,7 @@ namespace Digitale_Geraeteliste.ViewModels
                     case ItemStatus.LentOut:
                         foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
                         {
-                            if (row.Status == ItemStatus.LentOut)
+                            if (row.Status == ItemStatus.LentOut || row.Status == ItemStatus.Overdue)
                             {
                                 Rows.Add(row);
                             }
@@ -140,6 +140,23 @@ namespace Digitale_Geraeteliste.ViewModels
             {
                 Refresh();
             }
+        }
+        public ICommand ShowOpenLendsCommand => new RelayCommand(_ => ShowOpenLends());
+        public ICommand ShowOverdueLendsCOmmand => new RelayCommand(_ => ShowOverdueLends());
+        public ICommand ShowAllItemsCommand => new RelayCommand(_ => ShowAllItems());
+
+        private void ShowOpenLends()
+        {
+            SelectedStatus = ItemStatus.LentOut;
+        }
+        private void ShowOverdueLends()
+        {
+            SelectedStatus = ItemStatus.Overdue;
+        }
+        private void ShowAllItems()
+        {
+            SelectedStatus = null;
+            TextBoxFilter = string.Empty;
         }
     }
 }
