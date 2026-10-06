@@ -85,7 +85,7 @@ namespace Digitale_Geraeteliste.ViewModels
                     if (row.InventoryNumber.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase) || 
                         (row.Status.ToString().Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.BorrowedByEmployeeName != null && row.BorrowedByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
                         || (row.LendByEmployeeName != null && row.LendByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.CategoryName != null && row.CategoryName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
-                            || (row.ExpectedReturnDate != null && row.ExpectedReturnDate.ToString().Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)))
+                            || (row.ExpectedReturnDate != null && row.ExpectedReturnDate.Value.ToString("dd.MM.yyyy").Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)))
                     {
                         Rows.Add(row);
                     }
