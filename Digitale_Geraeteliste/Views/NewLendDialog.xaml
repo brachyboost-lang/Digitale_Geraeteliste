@@ -11,7 +11,7 @@
             <TextBlock Text="Gerät" FontWeight="Bold" />
             <TextBlock Text="{Binding ItemDisplay}" Margin="0,0,0,10" />
 
-            <TextBlock Text="Entleiher" />
+            <TextBlock Text="Entliehen an" />
             <ComboBox ItemsSource="{Binding BorrowingEmployees}" DisplayMemberPath="FullName"
               SelectedItem="{Binding SelectedBorrower}" IsEditable="True" Margin="0,0,0,10" />
 
@@ -25,7 +25,7 @@
             <TextBlock Text="Rückgabe bis (leer = Standard-Leihdauer)" />
             <DatePicker SelectedDate="{Binding ExpectedReturnDate}" Margin="0,0,0,10" />
 
-            <TextBlock Text="Bauvorhaben / Vertrag" />
+            <TextBlock Text="Vertragsnummer (optional)" />
             <TextBox Text="{Binding ContractNumber}" Margin="0,0,0,15" />
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
