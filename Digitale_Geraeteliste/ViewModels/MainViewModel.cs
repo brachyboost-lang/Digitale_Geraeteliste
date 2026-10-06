@@ -65,7 +65,7 @@ namespace Digitale_Geraeteliste.ViewModels
         }
         private void OpenLendDialog()
         {
-            var dialogViewModel = new NewLendDialogViewModel(_lendService, SelectedRow!, _lendService.GetAllEmployees());
+            var dialogViewModel = new NewLendDialogViewModel(_lendService, SelectedRow!, _lendService.GetStorageEmployees(), _lendService.GetAllEmployees());
             var dialog = new NewLendDialog(dialogViewModel) { Owner = Application.Current.MainWindow };
             if (dialog.ShowDialog() == true)
             {

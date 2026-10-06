@@ -12,11 +12,17 @@ namespace Digitale_Geraeteliste.Core.Services
     {
         private readonly IItemRepository _itemRepository;
         private readonly ILendItemRepository _lendItemRepository;
+        public readonly IEmployeeRepository _employeeRepository;
         public LendService(IItemRepository itemRepository, ILendItemRepository lendItemRepository, IEmployeeRepository employeeRepository)
         {
             _itemRepository = itemRepository;
             _lendItemRepository = lendItemRepository;
+            _employeeRepository = employeeRepository;
         }
+        public IEnumerable<Employee> GetStorageEmployees() => _employeeRepository.GetEmployeesByDepartment("Lager");
+        // Spezifisch für die alten Stammdaten, eventuell umbau nötig in zukunft - might need to be refactored in the future
+
+        public IEnumerable<Employee> GetAllEmployees() => _employeeRepository.GetAllEmployees();
         public IEnumerable<InventoryOverviewRow> GetInventoryOverview(DateTime dateToCheck)
         {
             Dictionary<int, LendItem> openLends = _lendItemRepository.GetAllLendItems()
@@ -102,11 +108,6 @@ namespace Digitale_Geraeteliste.Core.Services
                 return TransactionResult.Failure("Failed to return lend item.");
             }
             return TransactionResult.Success();
-        }
-        public static void FillDepartmentEmployees(InventoryOverviewRow overviewRow, IEmployeeRepository employeeRepository)
-        {
-            overviewRow.StorageEmployees = employeeRepository.GetEmployeesByDepartment("Lager");
-            overviewRow.BorrowingEmployees = employeeRepository.GetAllEmployees();
         }
     }
 }
