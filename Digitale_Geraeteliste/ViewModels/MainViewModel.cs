@@ -4,7 +4,6 @@ using Digitale_Geraeteliste.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
