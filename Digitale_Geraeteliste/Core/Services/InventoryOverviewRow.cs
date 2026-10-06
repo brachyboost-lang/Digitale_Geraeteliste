@@ -16,7 +16,7 @@ namespace Digitale_Geraeteliste.Core.Services
         public DateTime? ExpectedReturnDate { get; set; }
         public string? CategoryName { get; set; }
         public ItemStatus Status { get; set; }
-        public string TableName { get; set; } = string.Empty;
+
 
     }
 }

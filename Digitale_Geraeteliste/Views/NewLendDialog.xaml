@@ -12,11 +12,11 @@
             <TextBlock Text="{Binding ItemDisplay}" Margin="0,0,0,10" />
 
             <TextBlock Text="Entleiher" />
-            <ComboBox ItemsSource="{Binding Employees}" DisplayMemberPath="FullName"
+            <ComboBox ItemsSource="{Binding BorrowingEmployees}" DisplayMemberPath="FullName"
               SelectedItem="{Binding SelectedBorrower}" IsEditable="True" Margin="0,0,0,10" />
 
             <TextBlock Text="Ausgegeben von" />
-            <ComboBox ItemsSource="{Binding Employees}" DisplayMemberPath="FullName"
+            <ComboBox ItemsSource="{Binding StorageEmployees}" DisplayMemberPath="FullName"
               SelectedItem="{Binding SelectedLender}" IsEditable="True" Margin="0,0,0,10" />
 
             <TextBlock Text="Ausgabedatum" />
