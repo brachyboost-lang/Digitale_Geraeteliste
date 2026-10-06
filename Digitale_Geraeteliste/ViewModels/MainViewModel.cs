@@ -66,44 +66,69 @@ namespace Digitale_Geraeteliste.ViewModels
                 }
             }
         }
+        private string _textBoxFilter = string.Empty;
+        public string textBoxFilter
+        {
+            get => _textBoxFilter;
+            set
+            {
+                _textBoxFilter = value;
+                OnPropertyChanged();
+                Refresh();
+            }
+        }
         public void Refresh()
         {
             Rows.Clear();
-            switch (SelectedStatus)
+            if (textBoxFilter != null && textBoxFilter.Length > 0 && textBoxFilter.Trim().Length > 0)
             {
-                case ItemStatus.Available:
-                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
-                    {
-                        if (row.Status == ItemStatus.Available)
-                        {
-                            Rows.Add(row);
-                        }
-                    }
-                    break;
-                case ItemStatus.LentOut:
-                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
-                    {
-                        if (row.Status == ItemStatus.LentOut)
-                        {
-                            Rows.Add(row);
-                        }
-                    }
-                    break;
-                case ItemStatus.Overdue:
-                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
-                    {
-                        if (row.Status == ItemStatus.Overdue)
-                        {
-                            Rows.Add(row);
-                        }
-                    }
-                    break;
-                default:
-                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                {
+                    if (row.InventoryNumber.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(textBoxFilter, StringComparison.OrdinalIgnoreCase))
                     {
                         Rows.Add(row);
                     }
-                    break;
+                }
+                return;
+            }
+            else
+            {
+                switch (SelectedStatus)
+                {
+                    case ItemStatus.Available:
+                        foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                        {
+                            if (row.Status == ItemStatus.Available)
+                            {
+                                Rows.Add(row);
+                            }
+                        }
+                        break;
+                    case ItemStatus.LentOut:
+                        foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                        {
+                            if (row.Status == ItemStatus.LentOut)
+                            {
+                                Rows.Add(row);
+                            }
+                        }
+                        break;
+                    case ItemStatus.Overdue:
+                        foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                        {
+                            if (row.Status == ItemStatus.Overdue)
+                            {
+                                Rows.Add(row);
+                            }
+                        }
+                        break;
+                    default:
+                        foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                        {
+                            Rows.Add(row);
+                        }
+                        break;
+                }
             }
         }
         private void OpenLendDialog()
