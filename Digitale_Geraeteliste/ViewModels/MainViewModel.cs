@@ -53,12 +53,57 @@ namespace Digitale_Geraeteliste.ViewModels
                 }
             }
         }
+        public ItemStatus? SelectedStatus
+        {
+            get => SelectedRow?.Status;
+            set
+            {
+                if (SelectedRow != null && value.HasValue)
+                {
+                    SelectedRow.Status = value.Value;
+                    OnPropertyChanged(nameof(SelectedStatus));
+                    Refresh();
+                }
+            }
+        }
         public void Refresh()
         {
             Rows.Clear();
-            foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+            switch (SelectedStatus)
             {
-                Rows.Add(row);
+                case ItemStatus.Available:
+                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                    {
+                        if (row.Status == ItemStatus.Available)
+                        {
+                            Rows.Add(row);
+                        }
+                    }
+                    break;
+                case ItemStatus.LentOut:
+                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                    {
+                        if (row.Status == ItemStatus.LentOut)
+                        {
+                            Rows.Add(row);
+                        }
+                    }
+                    break;
+                case ItemStatus.Overdue:
+                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                    {
+                        if (row.Status == ItemStatus.Overdue)
+                        {
+                            Rows.Add(row);
+                        }
+                    }
+                    break;
+                default:
+                    foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
+                    {
+                        Rows.Add(row);
+                    }
+                    break;
             }
         }
         private void OpenLendDialog()
