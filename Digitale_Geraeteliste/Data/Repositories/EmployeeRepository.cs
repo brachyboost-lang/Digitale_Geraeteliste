@@ -16,11 +16,11 @@ namespace Digitale_Geraeteliste.Data.Repositories
         }
         public List<Employee> GetAllEmployees()
         {
-            return _context.Employees.ToList();
+            return _context.Employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToList();
         }
         public List<Employee> GetEmployeesByDepartment(string department)
         {
-            return _context.Employees.Where(e => e.Department == department).ToList();
+            return _context.Employees.Where(e => e.Department == department).OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToList();
         }
         public bool ChangeEmployee(Employee employee, string firstName, string lastName, string department)
         {
