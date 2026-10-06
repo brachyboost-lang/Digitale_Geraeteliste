@@ -12,7 +12,7 @@ namespace Digitale_Geraeteliste.Core.Services
     {
         private readonly IItemRepository _itemRepository;
         private readonly ILendItemRepository _lendItemRepository;
-        public readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         public LendService(IItemRepository itemRepository, ILendItemRepository lendItemRepository, IEmployeeRepository employeeRepository)
         {
             _itemRepository = itemRepository;
