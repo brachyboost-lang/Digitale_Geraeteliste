@@ -24,12 +24,12 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inventarnr." Binding="{Binding InventoryNumber}" />
                 <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Kategorie" Binding="{Binding CategoryName}" />
-                <DataGridTextColumn Header="Entliehen von" Binding="{Binding LendByEmployeeName}" />
-                <DataGridTextColumn Header="Entliehen an" Binding="{Binding BorrowedByEmployeeName}" /> 
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
-                <DataGridTextColumn Header="Ausgabedatum" Binding="{Binding LendDate, StringFormat=dd.MM.yyyy}" />
-                <DataGridTextColumn Header="Rückgabe bis" Binding="{Binding ExpectedReturnDate, StringFormat=dd.MM.yyyy}" />
+                <DataGridTextColumn Header="Kategorie" Binding="{Binding CategoryName}" Width="*" />
+                <DataGridTextColumn Header="Entliehen von" Binding="{Binding LendByEmployeeName}" Width="*" />
+                <DataGridTextColumn Header="Entliehen an" Binding="{Binding BorrowedByEmployeeName}" Width="*" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*" />
+                <DataGridTextColumn Header="Ausgabedatum" Binding="{Binding LendDate, StringFormat=dd.MM.yyyy}" Width="*" />
+                <DataGridTextColumn Header="Rückgabe bis" Binding="{Binding ExpectedReturnDate, StringFormat=dd.MM.yyyy}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" Width="200">
