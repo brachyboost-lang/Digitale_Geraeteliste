@@ -41,7 +41,6 @@ namespace Digitale_Geraeteliste.ViewModels
 
         private void ReturnSelected()
         {
-            MessageBox.Show("Möchten Sie den ausgewählten Artikel zurückgeben?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (MessageBoxResult.Yes == MessageBox.Show("Möchten Sie den ausgewählten Artikel zurückgeben?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question))
             {
                 var result = _lendService.ReturnItem(SelectedRow!.LendItemID!.Value, DateTime.Today);
