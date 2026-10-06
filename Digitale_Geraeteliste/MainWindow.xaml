@@ -30,6 +30,7 @@
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*" />
                 <DataGridTextColumn Header="Ausgabedatum" Binding="{Binding LendDate, StringFormat=dd.MM.yyyy}" Width="*" />
                 <DataGridTextColumn Header="Rückgabe bis" Binding="{Binding ExpectedReturnDate, StringFormat=dd.MM.yyyy}" Width="*" />
+                <DataGridTextColumn Header="Vertragsnummer" Binding="{Binding ContractNumber}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" Width="200">

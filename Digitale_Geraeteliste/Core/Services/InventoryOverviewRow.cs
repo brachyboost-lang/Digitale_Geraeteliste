@@ -17,6 +17,7 @@ namespace Digitale_Geraeteliste.Core.Services
         public string? CategoryName { get; set; }
         public ItemStatus Status { get; set; }
         public DateTime? LendDate { get; set; }
+        public string? ContractNumber { get; set; }
 
 
 
