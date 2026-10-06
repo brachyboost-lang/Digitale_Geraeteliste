@@ -91,7 +91,6 @@ namespace Digitale_Geraeteliste.ViewModels
                         Rows.Add(row);
                     }
                 }
-                return;
             }
             else
             {
