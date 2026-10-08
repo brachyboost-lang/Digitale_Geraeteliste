@@ -85,8 +85,10 @@ namespace Digitale_Geraeteliste.ViewModels
                 foreach (InventoryOverviewRow row in _lendService.GetInventoryOverview(DateTime.Today))
                 {
                     if (row.InventoryNumber.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase) || row.Name.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase) || 
-                        (row.Status.ToString().Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.BorrowedByEmployeeName != null && row.BorrowedByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
-                        || (row.LendByEmployeeName != null && row.LendByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || (row.CategoryName != null && row.CategoryName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
+                        (row.Status.ToString().Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || 
+                        (row.BorrowedByEmployeeName != null && row.BorrowedByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
+                        || (row.LendByEmployeeName != null && row.LendByEmployeeName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)) || 
+                        (row.CategoryName != null && row.CategoryName.Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
                             || (row.ExpectedReturnDate != null && row.ExpectedReturnDate.Value.ToString("dd.MM.yyyy").Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase))
                             || (row.LendDate != null && row.LendDate.Value.ToString("dd.MM.yyyy").Contains(TextBoxFilter, StringComparison.OrdinalIgnoreCase)))
                     {

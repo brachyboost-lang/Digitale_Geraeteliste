@@ -1,0 +1,245 @@
+@startuml Klassendiagramm
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+left to right direction
+
+package "Core.Model" {
+  class Category {
+    + Id : int
+    + Name : string
+    + Category(name : string)
+  }
+
+  class Employee {
+    + Id : int
+    + LastName : string
+    + FirstName : string
+    + FullName : string
+    + Department : string
+    + Employee(lastName : string, firstName : string, department : string)
+    + CreateFullName(firstName : string, lastName : string) : string
+  }
+
+  class Item {
+    + Id : int
+    + InventoryNumber : string
+    + Name : string
+    + CategoryId : int
+    + Description : string
+    + StandardLendDuration : int
+    + IsRetired : bool
+    + NeedsMaintenance : bool
+  }
+
+  class LendItem {
+    + Id : int
+    + LendDate : DateTime
+    + ExpectedReturnDate : DateTime
+    + ActualReturnDate : DateTime?
+    + ItemId : int
+    + BorrowedById : int
+    + LendById : int
+    + IsActive : bool
+    + AffiliatedContractNumber : string
+    + IsOverdue : bool
+    + IsOverdueAt(dayToCheck : DateTime) : bool
+    + ReturnItem(returnDate : DateTime) : void
+  }
+
+  enum ItemStatus {
+    Available
+    LentOut
+    Retired
+    Overdue
+  }
+}
+
+package "Core.Interfaces" {
+  interface ILendService {
+    + GetStorageEmployees() : IEnumerable<Employee>
+    + GetAllEmployees() : IEnumerable<Employee>
+    + BorrowItem(itemId : int, borrowedById : int, lendById : int, lendDate : DateTime, expectedReturnDate : DateTime?, affiliatedContractNumber : string) : TransactionResult
+    + ReturnItem(lendItemId : int, returnDate : DateTime) : TransactionResult
+    + GetInventoryOverview(dateToCheck : DateTime) : IEnumerable<InventoryOverviewRow>
+  }
+
+  interface IItemRepository {
+    + CreateNewItem(...) : void
+    + GetItemById(id : int) : Item?
+    + GetAllItems() : IEnumerable<Item>
+    + ChangeItem(item : Item, ...) : bool
+    + CheckInventoryNumberDuplicate(inventoryNumber : string, itemId : int) : bool
+  }
+
+  interface IEmployeeRepository {
+    + GetAllEmployees() : List<Employee>
+    + GetEmployeesByDepartment(department : string) : List<Employee>
+    + CreateNewEmployee(firstName : string, lastName : string, department : string) : bool
+    + ChangeEmployee(employee : Employee, firstName : string, lastName : string, department : string) : bool
+    + GetEmployeeByID(id : int) : Employee?
+  }
+
+  interface ILendItemRepository {
+    + CreateNewLendItem(...) : bool
+    + GetLendItemById(id : int) : LendItem?
+    + GetAllLendItems() : IEnumerable<LendItem>
+    + ChangeLendItem(...) : bool
+    + ReturnLendItem(lendItemId : int, returnDate : DateTime) : bool
+    + GetAllOverdueLendItems() : IEnumerable<LendItem>
+    + GetOpenLendByItemId(itemId : int) : LendItem?
+  }
+}
+
+package "Core.Services" {
+  class LendService {
+    - _itemRepository : IItemRepository
+    - _lendItemRepository : ILendItemRepository
+    - _employeeRepository : IEmployeeRepository
+    + LendService(itemRepository, lendItemRepository, employeeRepository)
+    - {static} DetermineItemStatus(item : Item, openLend : LendItem?, dateToCheck : DateTime) : ItemStatus
+  }
+
+  class TransactionResult {
+    + IsSuccess : bool
+    + ErrorMessage : string
+    - TransactionResult(isSuccess : bool, errorMessage : string)
+    + {static} Success() : TransactionResult
+    + {static} Failure(errorMessage : string) : TransactionResult
+  }
+
+  class InventoryOverviewRow {
+    + ItemId : int
+    + LendItemID : int?
+    + InventoryNumber : string
+    + Name : string
+    + CategoryName : string?
+    + LendByEmployeeName : string?
+    + BorrowedByEmployeeName : string?
+    + Status : ItemStatus
+    + LendDate : DateTime?
+    + ExpectedReturnDate : DateTime?
+    + ContractNumber : string?
+  }
+}
+
+package "Data" {
+  class LendContext {
+    + Items : DbSet<Item>
+    + Categories : DbSet<Category>
+    + Employees : DbSet<Employee>
+    + LendItems : DbSet<LendItem>
+    # OnConfiguring(options : DbContextOptionsBuilder) : void
+    # OnModelCreating(modelBuilder : ModelBuilder) : void
+  }
+
+  class ItemRepository {
+    - _context : LendContext
+  }
+
+  class EmployeeRepository {
+    - _context : LendContext
+  }
+
+  class LendItemRepository {
+    - _context : LendContext
+    - _logPath : string
+    + ImportAllCSVData() : bool
+  }
+
+  class CSVImporter {
+    + {static} GetEmployeesFromCSV(filePath : string) : IEnumerable<Employee>
+    + {static} GetCategoriesFromCSV(filePath : string) : IEnumerable<Category>
+    + {static} GetItemsFromCSV(filePath : string, categories) : IEnumerable<Item>
+    + {static} GetLendItemsFromCSV(filePath : string, items, employees) : IEnumerable<LendItem>
+  }
+
+  class CSVExport <<static>> {
+    + {static} WriteOverdueList(rows : IEnumerable<InventoryOverviewRow>, filePath : string, dateToCheck : DateTime) : int
+    - {static} Clean(value : string?) : string
+  }
+}
+
+package "ViewModels" {
+  abstract class ViewModelBase {
+    + PropertyChanged : PropertyChangedEventHandler?
+    # OnPropertyChanged(propertyName : string?) : void
+  }
+
+  class RelayCommand {
+    - _execute : Action<object?>
+    - _canExecute : Func<object?, bool>?
+    + CanExecute(parameter : object?) : bool
+    + Execute(parameter : object?) : void
+  }
+
+  class MainViewModel {
+    - _lendService : ILendService
+    + Rows : ObservableCollection<InventoryOverviewRow>
+    + SelectedRow : InventoryOverviewRow?
+    + SelectedStatus : ItemStatus?
+    + TextBoxFilter : string
+    + LendCommand : RelayCommand
+    + ReturnCommand : RelayCommand
+    + ShowOpenLendsCommand : ICommand
+    + ShowOverdueLendsCommand : ICommand
+    + ShowAllItemsCommand : ICommand
+    + ExportOverdueLendsCommand : ICommand
+    + Refresh() : void
+    - OpenLendDialog() : void
+    - ReturnSelected() : void
+    - ExportOverdueLends() : void
+  }
+
+  class NewLendDialogViewModel {
+    - _lendService : ILendService
+    - _itemId : int
+    + ItemDisplay : string
+    + StorageEmployees : IEnumerable<Employee>
+    + BorrowingEmployees : IEnumerable<Employee>
+    + SelectedBorrower : Employee?
+    + SelectedLender : Employee?
+    + LendDate : DateTime?
+    + ExpectedReturnDate : DateTime?
+    + ContractNumber : string
+    + ConfirmCommand : RelayCommand
+    + CloseRequested : Action<bool>?
+    - Confirm() : void
+  }
+}
+
+' Beziehungen im Modell
+Item "*" --> "1" Category : Category
+LendItem "*" --> "1" Item : Item
+LendItem "*" --> "1" Employee : BorrowedBy
+LendItem "*" --> "1" Employee : LendBy
+InventoryOverviewRow --> ItemStatus
+
+' Service
+LendService ..|> ILendService
+LendService --> IItemRepository
+LendService --> ILendItemRepository
+LendService --> IEmployeeRepository
+LendService ..> TransactionResult : erzeugt
+LendService ..> InventoryOverviewRow : erzeugt
+
+' Datenschicht
+ItemRepository ..|> IItemRepository
+EmployeeRepository ..|> IEmployeeRepository
+LendItemRepository ..|> ILendItemRepository
+ItemRepository --> LendContext
+EmployeeRepository --> LendContext
+LendItemRepository --> LendContext
+LendItemRepository ..> CSVImporter : nutzt
+CSVExport ..> InventoryOverviewRow
+
+' Oberflächenlogik
+MainViewModel --|> ViewModelBase
+NewLendDialogViewModel --|> ViewModelBase
+MainViewModel --> ILendService
+NewLendDialogViewModel --> ILendService
+MainViewModel ..> RelayCommand
+NewLendDialogViewModel ..> RelayCommand
+MainViewModel ..> NewLendDialogViewModel : öffnet
+MainViewModel ..> CSVExport : nutzt
+@enduml
